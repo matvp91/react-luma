@@ -15,11 +15,11 @@ importers:
       '@react-luma/tsconfig': workspace:*
       '@types/react': ^18.0.26
       esbuild: ^0.16.7
-      react: ^18.2.0
+      react: ^16.14.0
       react-luma: workspace:*
       typescript: ^4.9.4
     dependencies:
-      react: 18.2.0
+      react: 16.14.0
     devDependencies:
       '@react-luma/tsconfig': link:../tsconfig
       '@types/react': 18.0.26
@@ -38,7 +38,7 @@ importers:
       esbuild: ^0.16.7
       performance-now: ^2.1.0
       pixi.js: ^7.0.5
-      react: '*'
+      react: ^16.14.0
       react-reconciler: 0.23.0
       tsup: ^6.5.0
       typescript: ^4.9.4
@@ -1249,13 +1249,6 @@ packages:
       loose-envify: 1.4.0
       object-assign: 4.1.1
       prop-types: 15.8.1
-    dev: false
-
-  /react/18.2.0:
-    resolution: {integrity: sha512-/3IjMdb2L9QbBdWiW5e3P2/npwMBaU9mHCSCUzNln0ZCYbcfTsGbTJrU/kGemdH2IWmB2ioZ+zkxtmq6g09fGQ==}
-    engines: {node: '>=0.10.0'}
-    dependencies:
-      loose-envify: 1.4.0
     dev: false
 
   /readdirp/3.6.0:

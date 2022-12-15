@@ -4,7 +4,7 @@ import { compact } from "../utils/compact";
 import { InvalidStyleConvertError } from "../utils/errors";
 import { createYogaNodes, applyNodeOnDisplayObject } from "./yoga";
 import type { DisplayObject } from "../element";
-import type { IStyle, ILayout } from "./types";
+import type { IStyle, ILayout, LayoutPosition } from "./types";
 
 function convertFlexDirection(style: IStyle) {
   switch (style.flexDirection) {
@@ -18,9 +18,29 @@ function convertFlexDirection(style: IStyle) {
   }
 }
 
+function convertMarginToPosition(style: IStyle): LayoutPosition {
+  return {
+    left: style.marginLeft || style.margin || 0,
+    right: style.marginRight || style.margin || 0,
+    top: style.marginTop || style.margin || 0,
+    bottom: style.marginBottom || style.margin || 0,
+  };
+}
+
+function convertPaddingToPosition(style: IStyle): LayoutPosition {
+  return {
+    left: style.paddingLeft || style.padding || 0,
+    right: style.paddingRight || style.padding || 0,
+    top: style.paddingTop || style.padding || 0,
+    bottom: style.paddingBottom || style.padding || 0,
+  };
+}
+
 function createLayout(style: IStyle): ILayout {
   return {
     flexDirection: convertFlexDirection(style),
+    padding: convertPaddingToPosition(style),
+    margin: convertMarginToPosition(style),
   };
 }
 

@@ -4,7 +4,7 @@ import type { IStyle } from "../layout/types";
 
 export type ViewProps = {
   style?: IStyle;
-  children?: JSX.Element | JSX.Element[];
+  children?: React.ReactNode;
 };
 
 export function View(props: ViewProps) {

@@ -16,6 +16,34 @@ export function createYogaNodes(layout: ILayout): yoga.YogaNode {
   if (layout.flexDirection) {
     root.setFlexDirection(layout.flexDirection);
   }
+  if (layout.padding) {
+    if (layout.padding.left) {
+      root.setPadding(yoga.EDGE_LEFT, layout.padding.left);
+    }
+    if (layout.padding.right) {
+      root.setPadding(yoga.EDGE_RIGHT, layout.padding.right);
+    }
+    if (layout.padding.top) {
+      root.setPadding(yoga.EDGE_TOP, layout.padding.top);
+    }
+    if (layout.padding.bottom) {
+      root.setPadding(yoga.EDGE_BOTTOM, layout.padding.bottom);
+    }
+  }
+  if (layout.margin) {
+    if (layout.margin.left) {
+      root.setMargin(yoga.EDGE_LEFT, layout.margin.left);
+    }
+    if (layout.margin.right) {
+      root.setMargin(yoga.EDGE_RIGHT, layout.margin.right);
+    }
+    if (layout.margin.top) {
+      root.setMargin(yoga.EDGE_TOP, layout.margin.top);
+    }
+    if (layout.margin.bottom) {
+      root.setMargin(yoga.EDGE_BOTTOM, layout.margin.bottom);
+    }
+  }
 
   if (layout.children) {
     layout.children.map(createYogaNodes).forEach((node, i) => {
