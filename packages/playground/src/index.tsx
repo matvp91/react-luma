@@ -15,7 +15,7 @@ function App() {
           width: 100,
           height: 100,
         }}
-        tint={0xff0000}
+        color="#ff0000"
       />
     </View>
   );
