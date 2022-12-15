@@ -1,4 +1,5 @@
 import yoga from "@react-pdf/yoga";
+import * as PIXI from "pixi.js";
 import type { DisplayObject } from "../element";
 import type { ILayout } from "./types";
 
@@ -44,6 +45,12 @@ export function createYogaNodes(layout: ILayout): yoga.YogaNode {
       root.setMargin(yoga.EDGE_BOTTOM, layout.margin.bottom);
     }
   }
+  if (layout.width) {
+    root.setWidth(layout.width);
+  }
+  if (layout.height) {
+    root.setHeight(layout.height);
+  }
 
   if (layout.children) {
     layout.children.map(createYogaNodes).forEach((node, i) => {
@@ -75,6 +82,16 @@ function applyNode(
     }
     if (key === "top") {
       displayObject.position.y = value;
+    }
+    // TODO: Check if we can have NaN, condition above is probably wrong.
+    //       For now, hot fix it.
+    if (displayObject instanceof PIXI.Sprite) {
+      if (key === "width") {
+        displayObject.width = value;
+      }
+      if (key === "height") {
+        displayObject.height = value;
+      }
     }
   });
 }

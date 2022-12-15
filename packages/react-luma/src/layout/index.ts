@@ -4,7 +4,7 @@ import { compact } from "../utils/compact";
 import { InvalidStyleConvertError } from "../utils/errors";
 import { createYogaNodes, applyNodeOnDisplayObject } from "./yoga";
 import type { DisplayObject } from "../element";
-import type { IStyle, ILayout, LayoutPosition } from "./types";
+import type { IStyle, ILayout, LayoutPosition, LayoutValue } from "./types";
 
 function convertFlexDirection(style: IStyle) {
   switch (style.flexDirection) {
@@ -36,11 +36,20 @@ function convertPaddingToPosition(style: IStyle): LayoutPosition {
   };
 }
 
+function convertDimension(value?: LayoutValue) {
+  if (!value) {
+    return "auto";
+  }
+  return value;
+}
+
 function createLayout(style: IStyle): ILayout {
   return {
     flexDirection: convertFlexDirection(style),
     padding: convertPaddingToPosition(style),
     margin: convertMarginToPosition(style),
+    width: convertDimension(style.width),
+    height: convertDimension(style.height),
   };
 }
 

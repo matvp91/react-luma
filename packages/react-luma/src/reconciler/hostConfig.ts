@@ -18,6 +18,12 @@ function setProps(element: Element, props: any) {
         element.displayObject.text = props.text;
       }
     }
+
+    if (element.type === "Sprite") {
+      if (props.tint && element.displayObject instanceof PIXI.Sprite) {
+        element.displayObject.tint = props.tint;
+      }
+    }
   });
 }
 

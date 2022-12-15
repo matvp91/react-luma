@@ -3,16 +3,18 @@ import yoga from "@react-pdf/yoga";
 export type FlexDirection = "row" | "column";
 
 export type LayoutPosition = {
-  left: number;
-  right: number;
-  top: number;
-  bottom: number;
+  left: number | string;
+  right: number | string;
+  top: number | string;
+  bottom: number | string;
 };
+
+export type LayoutValue = string | number;
 
 export interface ILayout {
   children?: Array<ILayout>;
-  width?: number;
-  height?: number;
+  width?: LayoutValue;
+  height?: LayoutValue;
   flexDirection?: yoga.YogaFlexDirection;
   padding?: LayoutPosition;
   margin?: LayoutPosition;
@@ -21,14 +23,16 @@ export interface ILayout {
 export interface IStyle {
   flex?: number;
   flexDirection?: FlexDirection;
-  padding?: number;
-  paddingLeft?: number;
-  paddingRight?: number;
-  paddingTop?: number;
-  paddingBottom?: number;
-  margin?: number;
-  marginLeft?: number;
-  marginRight?: number;
-  marginTop?: number;
-  marginBottom?: number;
+  padding?: LayoutValue;
+  paddingLeft?: LayoutValue;
+  paddingRight?: LayoutValue;
+  paddingTop?: LayoutValue;
+  paddingBottom?: LayoutValue;
+  margin?: LayoutValue;
+  marginLeft?: LayoutValue;
+  marginRight?: LayoutValue;
+  marginTop?: LayoutValue;
+  marginBottom?: LayoutValue;
+  width?: LayoutValue;
+  height?: LayoutValue;
 }

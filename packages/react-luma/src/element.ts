@@ -9,7 +9,7 @@ export type DisplayObject = PIXI.Container & {
   };
 };
 
-export type ElementType = "View" | "Text";
+export type ElementType = "View" | "Text" | "Sprite";
 
 export class Element {
   displayObject: DisplayObject;
@@ -25,10 +25,21 @@ export class Element {
           hasBounds: true,
         };
         break;
+      case "Sprite":
+        // @ts-ignore
+        this.displayObject = new PIXI.Sprite(PIXI.Texture.WHITE);
+        this.displayObject.__luma = {
+          // No bounds because we explicitly have to set them, as
+          // size of the sprite.
+          hasBounds: false,
+        };
+        break;
       default:
         // @ts-ignore
         this.displayObject = new PIXI.Container();
         this.displayObject.__luma = {
+          // No bounds because it's relative to the children
+          // of the container.
           hasBounds: false,
         };
         break;

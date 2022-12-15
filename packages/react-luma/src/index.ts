@@ -5,6 +5,7 @@ import { Element } from "./element";
 
 export { View } from "./elements/View";
 export { Text } from "./elements/Text";
+export { Sprite } from "./elements/Sprite";
 
 function createApp(view: HTMLCanvasElement) {
   const width = 1080;
