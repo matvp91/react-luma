@@ -55,7 +55,7 @@ export function NavProvider(props: NavProviderProps) {
   }, [manager, focusedElement]);
 
   useEffect(() => {
-    const nextElement = manager.getNextInSession(props.defaultSectionId);
+    const nextElement = manager.getNextInSection(props.defaultSectionId);
     if (nextElement) {
       setFocusedElement(nextElement);
     }

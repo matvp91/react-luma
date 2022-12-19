@@ -465,7 +465,7 @@ export function createManager() {
     return null;
   };
 
-  const getNextInSession = (sectionId: string) => {
+  const getNextInSection = (sectionId: string) => {
     const range: {
       [id: string]: boolean;
     } = {};
@@ -527,7 +527,7 @@ export function createManager() {
     addElement,
     removeElement,
     getNext,
-    getNextInSession,
+    getNextInSection,
     getSectionId,
   };
 }
