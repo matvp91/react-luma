@@ -1,9 +1,9 @@
 import React, { useContext, useRef, useLayoutEffect } from "react";
-import { View } from "../../elements/View";
+import { View } from "../../elements";
 import { FocusSectionContext } from "./FocusSection";
 import { NavProviderContext } from "./NavProvider";
 import type { ReactNode } from "react";
-import type { Element } from "../../element";
+import type { ReactLumaElement } from "../../ReactLumaElement";
 
 type FocusableRenderProp = (hasFocus: boolean) => ReactNode;
 
@@ -12,7 +12,7 @@ type FocusableProps = {
 };
 
 export function Focusable(props: FocusableProps) {
-  const ref = useRef<Element>(null);
+  const ref = useRef<ReactLumaElement>(null);
   const sectionId = useContext(FocusSectionContext);
   const { manager, focusedElement } = useContext(NavProviderContext);
 

@@ -2,12 +2,12 @@
 // library by Luke Chang (Mozilla), licensed under Mozilla Public License 2.0.
 // Check out the original source code here: https://github.com/luke-chang/js-spatial-navigation
 
-import type { Element } from "../element";
+import type { ReactLumaElement } from "../ReactLumaElement";
 
 export type Direction = "left" | "right" | "up" | "down";
 
 type Rect = {
-  element: Element;
+  element: ReactLumaElement;
   left: number;
   right: number;
   top: number;
@@ -290,7 +290,7 @@ function getCenter(rect: Rect): Rect {
   };
 }
 
-function getRect(element: Element): Rect {
+function getRect(element: ReactLumaElement): Rect {
   const bounds = element.getBounds();
   return {
     element,
@@ -301,7 +301,10 @@ function getRect(element: Element): Rect {
   };
 }
 
-function exclude(elements: Element[], excludedElements: Element[]) {
+function exclude(
+  elements: ReactLumaElement[],
+  excludedElements: ReactLumaElement[]
+) {
   for (let i = 0, index; i < excludedElements.length; i++) {
     index = elements.indexOf(excludedElements[i]);
     if (index >= 0) {
@@ -312,9 +315,9 @@ function exclude(elements: Element[], excludedElements: Element[]) {
 }
 
 function navigate(
-  target: Element,
+  target: ReactLumaElement,
   direction: Direction,
-  candidates: Element[]
+  candidates: ReactLumaElement[]
 ) {
   const candidateRects = candidates.map(getRect);
   const targetRect = getRect(target);
@@ -418,11 +421,11 @@ function generateDistanceFunctions(targetRect: Rect): DistanceFunctions {
 export function createManager() {
   const sections: {
     [sectionId: string]: {
-      elements: Set<Element>;
+      elements: Set<ReactLumaElement>;
     };
   } = {};
 
-  const getSectionId = (element: Element) => {
+  const getSectionId = (element: ReactLumaElement) => {
     for (let sectionId in sections) {
       if (sections[sectionId].elements.has(element)) {
         return sectionId;
@@ -431,7 +434,7 @@ export function createManager() {
     throw new Error("Section id not found for element.");
   };
 
-  const addElement = (sectionId: string, element: Element) => {
+  const addElement = (sectionId: string, element: ReactLumaElement) => {
     if (!sections[sectionId]) {
       sections[sectionId] = {
         elements: new Set(),
@@ -440,7 +443,7 @@ export function createManager() {
     sections[sectionId].elements.add(element);
   };
 
-  const removeElement = (element: Element) => {
+  const removeElement = (element: ReactLumaElement) => {
     const sectionId = getSectionId(element);
     if (sectionId) {
       sections[sectionId].elements.delete(element);
@@ -482,17 +485,20 @@ export function createManager() {
     return null;
   };
 
-  const getNext = (direction: Direction, currentFocusedElement: Element) => {
+  const getNext = (
+    direction: Direction,
+    currentFocusedElement: ReactLumaElement
+  ) => {
     const sectionElements: {
-      [sectionId: string]: Element[];
+      [sectionId: string]: ReactLumaElement[];
     } = {};
-    const allElements: Element[] = [];
+    const allElements: ReactLumaElement[] = [];
     for (let id in sections) {
       sectionElements[id] = getSectionElements(id);
       allElements.push(...sectionElements[id]);
     }
 
-    let next: Element | null = null;
+    let next: ReactLumaElement | null = null;
 
     const currentSectionId = getSectionId(currentFocusedElement);
     const currentSectionElements = sectionElements[currentSectionId];

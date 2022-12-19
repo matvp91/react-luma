@@ -2,7 +2,7 @@ import React, { createContext, useState, useEffect } from "react";
 import { createManager } from "../manager";
 import { useRefValue } from "../../utils/hooks";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
-import type { Element } from "../../element";
+import type { ReactLumaElement } from "../../ReactLumaElement";
 import type { Direction } from "../manager";
 
 type NavProviderProps = {
@@ -12,8 +12,8 @@ type NavProviderProps = {
 
 type NavProviderContext = {
   manager: ReturnType<typeof createManager>;
-  setFocusedElement: Dispatch<SetStateAction<Element | null>>;
-  focusedElement: Element | null;
+  setFocusedElement: Dispatch<SetStateAction<ReactLumaElement | null>>;
+  focusedElement: ReactLumaElement | null;
 };
 
 export const NavProviderContext = createContext<NavProviderContext>(
@@ -37,6 +37,10 @@ export function NavProvider(props: NavProviderProps) {
         ArrowLeft: "left",
         ArrowRight: "right",
       }[event.key] as Direction;
+
+      if (!direction) {
+        return null;
+      }
 
       const nextElement = manager.getNext(direction, focusedElement);
       if (nextElement) {

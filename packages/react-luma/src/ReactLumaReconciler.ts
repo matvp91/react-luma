@@ -1,35 +1,12 @@
+import createReconciler from "react-reconciler";
 import performanceNow from "performance-now";
-import invariant from "../utils/invariant";
-import { Element } from "../element";
-import { layoutElement } from "../layout";
-import * as PIXI from "pixi.js";
-
-function setProps(element: Element, props: any) {
-  Object.keys(props).forEach((name) => {
-    const value = props[name];
-
-    if (name === "style") {
-      value && element.setStyle(value);
-      return;
-    }
-
-    if (element.type === "Text") {
-      if (props.text && element.displayObject instanceof PIXI.Text) {
-        element.displayObject.text = props.text;
-      }
-    }
-
-    if (element.type === "Sprite") {
-      if (props.tint && element.displayObject instanceof PIXI.Sprite) {
-        element.displayObject.tint = props.tint;
-      }
-    }
-  });
-}
+import invariant from "./utils/invariant";
+import { createElement } from "./ReactLumaElement";
+import { calculateLayout } from "./ReactLumaLayout";
 
 const NO_CONTEXT = {};
 
-const hostConfig = {
+export const ReactLumaReconciler = createReconciler({
   now: performanceNow,
 
   getRootHostContext() {
@@ -53,7 +30,7 @@ const hostConfig = {
   },
 
   resetAfterCommit(parent) {
-    layoutElement(parent);
+    calculateLayout(parent);
   },
 
   shouldSetTextContent() {
@@ -69,9 +46,9 @@ const hostConfig = {
   },
 
   createInstance(type, newProps) {
-    const instance = new Element(type);
-    setProps(instance, newProps);
-    return instance;
+    const element = createElement(type);
+    element.setProps(newProps);
+    return element;
   },
 
   appendInitialChild(parent, child) {
@@ -88,18 +65,17 @@ const hostConfig = {
 
   appendChildToContainer(parent, child) {
     parent.appendChild(child);
-    layoutElement(parent);
+    calculateLayout(parent);
   },
 
   supportsMutation: true,
 
   prepareUpdate() {
-    // TODO: Diff properties.
     return true;
   },
 
   commitUpdate(instance, updatePayload, type, oldProps, newProps) {
-    setProps(instance, newProps);
+    instance.setProps(newProps);
   },
 
   commitTextUpdate() {
@@ -133,6 +109,4 @@ const hostConfig = {
   shouldDeprioritizeSubtree() {
     return false;
   },
-};
-
-export default hostConfig;
+});
