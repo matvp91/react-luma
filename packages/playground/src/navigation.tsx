@@ -24,7 +24,7 @@ type SwimlaneProps = {
 };
 
 function Swimlane(props: SwimlaneProps) {
-  const items = [...Array(6)].map((index) => (
+  const items = [...Array(6)].map((_, index) => (
     <View
       key={index}
       style={{
