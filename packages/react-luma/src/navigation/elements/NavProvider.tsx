@@ -1,9 +1,9 @@
 import React, { createContext, useState, useEffect } from "react";
-import { createManager } from "../manager";
+import { createManager } from "../ReactLumaNavigation";
 import { useRefValue } from "../../utils/hooks";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 import type { ReactLumaElement } from "../../ReactLumaElement";
-import type { Direction } from "../manager";
+import type { Direction } from "../ReactLumaNavigation";
 
 type NavProviderProps = {
   children: ReactNode;

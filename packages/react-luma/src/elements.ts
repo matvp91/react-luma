@@ -1,5 +1,5 @@
 import React, { forwardRef } from "react";
-import type { ViewProps, TextProps, SpriteProps } from "./types";
+import type { ViewProps, TextProps, ImageProps } from "./types";
 
 export const View = forwardRef((props: ViewProps, ref) => {
   return React.createElement("View", {
@@ -10,5 +10,4 @@ export const View = forwardRef((props: ViewProps, ref) => {
 
 export const Text = (props: TextProps) => React.createElement("Text", props);
 
-export const Sprite = (props: SpriteProps) =>
-  React.createElement("Sprite", props);
+export const Image = (props: ImageProps) => React.createElement("Image", props);

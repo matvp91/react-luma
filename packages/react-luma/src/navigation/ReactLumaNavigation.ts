@@ -451,6 +451,9 @@ export function createManager() {
   };
 
   const getSectionElements = (sectionId: string) => {
+    if (!sections[sectionId]) {
+      return [];
+    }
     return Array.from(sections[sectionId].elements);
   };
 

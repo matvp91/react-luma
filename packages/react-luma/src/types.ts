@@ -23,10 +23,12 @@ export type ViewProps = {
 
 export type TextProps = {
   style?: ElementStyle;
+  color?: string;
   text: string;
 };
 
-export type SpriteProps = {
+export type ImageProps = {
   style?: ElementStyle;
   color?: string;
+  src: string;
 };

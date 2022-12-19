@@ -16,6 +16,7 @@
   },
   "dependencies": {
     "globalthis": "^1.0.3",
-    "react": "^16.14.0"
+    "react": "^16.14.0",
+    "whatwg-fetch": "^3.6.2"
   }
 }

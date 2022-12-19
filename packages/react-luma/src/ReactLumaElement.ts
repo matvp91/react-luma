@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { shortToPosition } from "./ReactLumaLayout";
 
-type ReactLumaElementType = "View" | "Text" | "Sprite";
+type ReactLumaElementType = "View" | "Text" | "Image";
 
 function appendChildToElement(
   element: ReactLumaElement,
@@ -44,8 +44,8 @@ export class ReactLumaElement {
 
     if (type === "Text") {
       this.displayElement = new PIXI.Text();
-    } else if (type === "Sprite") {
-      this.displayElement = new PIXI.Sprite(PIXI.Texture.WHITE);
+    } else if (type === "Image") {
+      this.displayElement = new PIXI.Sprite();
     } else if (type === "View") {
       this.displayElement = new PIXI.Container();
     } else {
@@ -117,6 +117,10 @@ export class ReactLumaElement {
         this.displayElement.text = props.text;
       }
 
+      if (props.color) {
+        this.displayElement.style.fill = PIXI.utils.string2hex(props.color);
+      }
+
       const bounds = this.displayElement.getBounds();
       this.layoutNode.setWidth(bounds.width);
       this.layoutNode.setHeight(bounds.height);
@@ -125,6 +129,13 @@ export class ReactLumaElement {
     if (this.displayElement instanceof PIXI.Sprite) {
       if (props.color) {
         this.displayElement.tint = PIXI.utils.string2hex(props.color);
+      }
+
+      if (props.src) {
+        // TODO: This is wrong, a text element is a sprite aswell.
+        PIXI.Texture.fromURL(props.src).then((texture) => {
+          (this.displayElement as PIXI.Sprite).texture = texture;
+        });
       }
     }
   }

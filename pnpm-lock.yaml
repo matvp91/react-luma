@@ -25,9 +25,11 @@ importers:
       react: ^16.14.0
       react-luma: workspace:*
       typescript: ^4.9.4
+      whatwg-fetch: ^3.6.2
     dependencies:
       globalthis: 1.0.3
       react: 16.14.0
+      whatwg-fetch: 3.6.2
     devDependencies:
       '@chialab/esbuild-plugin-html': 0.17.2
       '@react-luma/tsconfig': link:../tsconfig
@@ -1811,6 +1813,10 @@ packages:
   /webidl-conversions/4.0.2:
     resolution: {integrity: sha512-YQ+BmxuTgd6UXZW3+ICGfyqRyHXVlD5GtQr5+qjiNW7bF0cqrzX500HVXPBOvgXb5YnzDd+h0zqyv61KUD7+Sg==}
     dev: true
+
+  /whatwg-fetch/3.6.2:
+    resolution: {integrity: sha512-bJlen0FcuU/0EMLrdbJ7zOnW6ITZLrZMIarMUVmdKtsGvZna8vxKYaexICWPfZ8qwf9fzNq+UEIZrnSaApt6RA==}
+    dev: false
 
   /whatwg-url/7.1.0:
     resolution: {integrity: sha512-WUu7Rg1DroM7oQvGWfOiAK21n74Gg+T4elXEQYkOhtyLeWiJFoOGLXPKI/9gzIie9CtwVLm8wtw6YJdKyxSjeg==}
