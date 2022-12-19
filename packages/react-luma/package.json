@@ -9,6 +9,10 @@
     ".": {
       "import": "./dist/index.js",
       "default": "./dist/index.cjs"
+    },
+    "./navigation": {
+      "import": "./dist/navigation/index.js",
+      "default": "./dist/navigation/index.cjs"
     }
   },
   "scripts": {
@@ -36,7 +40,8 @@
   },
   "tsup": {
     "entry": [
-      "src/index.ts"
+      "src/index.ts",
+      "src/navigation/index.ts"
     ],
     "format": [
       "esm",

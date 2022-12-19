@@ -1,5 +1,6 @@
 import React from "react";
 import { render, View, Text, Sprite } from "react-luma";
+import NavigationApp from "./navigation";
 
 function App() {
   const [visible, setVisible] = React.useState(true);
@@ -23,5 +24,5 @@ function App() {
 
 const container = document.getElementById("root");
 if (container instanceof HTMLCanvasElement) {
-  render(<App />, container);
+  render(<NavigationApp />, container);
 }

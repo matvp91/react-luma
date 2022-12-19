@@ -7,6 +7,8 @@ export { View } from "./elements/View";
 export { Text } from "./elements/Text";
 export { Sprite } from "./elements/Sprite";
 
+export type { Element } from "./element";
+
 function createApp(view: HTMLCanvasElement) {
   const width = 1080;
   const height = width * (9 / 16);

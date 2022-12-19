@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import { IStyle } from "./layout/types";
+import type { IStyle } from "./layout/types";
 
 export type DisplayObject = PIXI.Container & {
   children: DisplayObject[];
@@ -10,6 +10,15 @@ export type DisplayObject = PIXI.Container & {
 };
 
 export type ElementType = "View" | "Text" | "Sprite";
+
+export type ElementBounds = {
+  left: number;
+  top: number;
+  right: number;
+  bottom: number;
+  width: number;
+  height: number;
+};
 
 export class Element {
   displayObject: DisplayObject;
@@ -63,5 +72,17 @@ export class Element {
 
   removeChild(child: Element) {
     this.displayObject.removeChild(child.displayObject);
+  }
+
+  getBounds(): ElementBounds {
+    const bounds = this.displayObject.getBounds();
+    return {
+      left: bounds.left,
+      right: bounds.right,
+      top: bounds.top,
+      bottom: bounds.bottom,
+      width: bounds.width,
+      height: bounds.height,
+    };
   }
 }

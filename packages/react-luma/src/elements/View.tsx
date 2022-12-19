@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { ViewTag } from "./constants";
 import type { IStyle } from "../layout/types";
 
@@ -7,7 +7,11 @@ export type ViewProps = {
   children?: React.ReactNode;
 };
 
-export function View(props: ViewProps) {
-  // @ts-ignore
-  return <ViewTag style={props.style}>{props.children}</ViewTag>;
-}
+export const View = forwardRef((props: ViewProps, ref) => {
+  return (
+    // @ts-ignore
+    <ViewTag ref={ref} style={props.style}>
+      {props.children}
+    </ViewTag>
+  );
+});
