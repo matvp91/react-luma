@@ -11,7 +11,9 @@
   },
   "devDependencies": {
     "prettier": "latest",
-    "turbo": "latest"
+    "rimraf": "^3.0.2",
+    "turbo": "latest",
+    "zx": "^7.1.1"
   },
   "engines": {
     "node": ">=14.0.0"

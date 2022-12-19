@@ -1,0 +1,11 @@
+{
+  "id": "be.matvp91.react-luma",
+  "title": "react-luma",
+  "main": "index.html",
+  "type": "web",
+  "icon": "icon.png",
+  "vendor": "Matthias Van Parijs",
+  "version": "1.0.0",
+  "appDescription": "React Luma on webOS",
+  "requiredMemory": 250
+}
