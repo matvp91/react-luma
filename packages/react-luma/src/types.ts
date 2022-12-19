@@ -2,6 +2,7 @@ import type { ReactNode } from "react";
 
 export type ElementStyle = {
   flexDirection?: "row" | "column";
+  left?: number;
   padding?: number;
   paddingLeft?: number;
   paddingRight?: number;

@@ -11,12 +11,15 @@ type SwimlaneProps = {
 };
 
 function Swimlane(props: SwimlaneProps) {
+  const [left, setLeft] = useState(0);
   const [items, setItems] = useState<
     {
       id: string;
       poster_path: string;
     }[]
   >([]);
+
+  window.setLeft = setLeft;
 
   useEffect(() => {
     const fetchData = async () => {
@@ -33,7 +36,7 @@ function Swimlane(props: SwimlaneProps) {
     <View style={{ marginBottom: 12 }}>
       <Text style={{ marginBottom: 6 }} text={props.title} color="#ffffff" />
       <FocusSection id={props.id}>
-        <View style={{ flexDirection: "row" }}>
+        <View style={{ flexDirection: "row", left }}>
           {items.map((item) => (
             <Focusable key={item.id}>
               {(hasFocus) => (

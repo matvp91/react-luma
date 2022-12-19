@@ -75,6 +75,10 @@ export class ReactLumaElement {
         this.layoutNode.setFlexDirection(yoga.FLEX_DIRECTION_COLUMN);
       }
 
+      if (props.style.left) {
+        this.layoutNode.setPosition(yoga.EDGE_LEFT, props.style.left);
+      }
+
       if (props.style.width) {
         this.layoutNode.setWidth(props.style.width);
       }
