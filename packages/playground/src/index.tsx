@@ -31,7 +31,7 @@ function Swimlane(props: SwimlaneProps) {
 
   return (
     <View style={{ marginBottom: 12 }}>
-      <Text style={{ marginBottom: 6 }} text={props.title} />
+      <Text style={{ marginBottom: 6 }} text={props.title} color="#ffffff" />
       <FocusSection id={props.id}>
         <View style={{ flexDirection: "row" }}>
           {items.map((item) => (
@@ -39,8 +39,8 @@ function Swimlane(props: SwimlaneProps) {
               {(hasFocus) => (
                 <Image
                   src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                  color={hasFocus ? "#ff0000" : "#ffffff"}
-                  style={{ marginRight: 12, width: 100, height: 150 }}
+                  tint={hasFocus ? "#ff0000" : "#ffffff"}
+                  style={{ marginRight: 12, width: 50, height: 75 }}
                 />
               )}
             </Focusable>
@@ -57,14 +57,14 @@ function App() {
       <View style={{ flexDirection: "row", padding: 12 }}>
         <View style={{ flexDirection: "column" }}>
           <FocusSection id="menu">
-            {(hasFocus) => (
-              <View style={{ width: hasFocus ? 100 : 25 }}>
+            {(hasSectionFocus) => (
+              <View style={{ width: hasSectionFocus ? 100 : 25 }}>
                 <View style={{ flexDirection: "row", marginBottom: 12 }}>
                   <Focusable>
                     {(hasFocus) => (
                       <Text
-                        text="One"
-                        color={hasFocus ? "#ff0000" : "#000000"}
+                        text={hasSectionFocus ? "One" : "O"}
+                        color={hasFocus ? "#ff0000" : "#ffffff"}
                       />
                     )}
                   </Focusable>
@@ -73,8 +73,8 @@ function App() {
                   <Focusable>
                     {(hasFocus) => (
                       <Text
-                        text="Two"
-                        color={hasFocus ? "#ff0000" : "#000000"}
+                        text={hasSectionFocus ? "Two" : "T"}
+                        color={hasFocus ? "#ff0000" : "#ffffff"}
                       />
                     )}
                   </Focusable>
@@ -83,8 +83,8 @@ function App() {
                   <Focusable>
                     {(hasFocus) => (
                       <Text
-                        text="Three"
-                        color={hasFocus ? "#ff0000" : "#000000"}
+                        text={hasSectionFocus ? "Three" : "T"}
+                        color={hasFocus ? "#ff0000" : "#ffffff"}
                       />
                     )}
                   </Focusable>
@@ -108,6 +108,16 @@ function App() {
             id="swimlane_upcoming_movies"
             title="Upcoming movies"
             tmdbPath="/movie/upcoming"
+          />
+          <Swimlane
+            id="swimlane_toprated_tv"
+            title="Top rated TV"
+            tmdbPath="/tv/top_rated"
+          />
+          <Swimlane
+            id="swimlane_toprated_movies"
+            title="Top rated movies"
+            tmdbPath="/movie/top_rated"
           />
         </View>
       </View>

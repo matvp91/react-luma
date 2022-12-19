@@ -1,4 +1,3 @@
-import yoga from "@react-pdf/yoga";
 import * as PIXI from "pixi.js";
 import type { ReactLumaElement } from "./ReactLumaElement";
 
@@ -20,7 +19,11 @@ function appendStyle(
   displayElement.position.x = layout.left;
   displayElement.position.y = layout.top;
 
-  if (displayElement instanceof PIXI.Sprite) {
+  // TODO: This is a very messy check. Make it explicit.
+  if (
+    displayElement instanceof PIXI.Sprite &&
+    !(displayElement instanceof PIXI.Text)
+  ) {
     displayElement.width = layout.width;
     displayElement.height = layout.height;
   }

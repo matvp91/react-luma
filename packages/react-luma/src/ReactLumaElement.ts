@@ -127,8 +127,8 @@ export class ReactLumaElement {
     }
 
     if (this.displayElement instanceof PIXI.Sprite) {
-      if (props.color) {
-        this.displayElement.tint = PIXI.utils.string2hex(props.color);
+      if (props.tint) {
+        this.displayElement.tint = PIXI.utils.string2hex(props.tint);
       }
 
       if (props.src) {

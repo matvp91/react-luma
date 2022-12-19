@@ -11,7 +11,7 @@ export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
   const app = new PIXI.Application({
     width,
     height,
-    backgroundColor: 0x10bb99,
+    backgroundColor: PIXI.utils.string2hex("#030303"),
     resolution: window.devicePixelRatio,
     view: hostContainer,
   });

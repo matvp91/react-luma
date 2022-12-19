@@ -29,6 +29,6 @@ export type TextProps = {
 
 export type ImageProps = {
   style?: ElementStyle;
-  color?: string;
+  tint?: string;
   src: string;
 };
