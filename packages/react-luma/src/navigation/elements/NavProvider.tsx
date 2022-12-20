@@ -1,6 +1,6 @@
 import React, { createContext, useState, useEffect } from "react";
 import { createManager } from "../ReactLumaNavigation";
-import { useRefValue } from "../../utils/hooks";
+import { useRefValue } from "../../hooks";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
 import type { ReactLumaElement } from "../../ReactLumaElement";
 import type { Direction } from "../ReactLumaNavigation";

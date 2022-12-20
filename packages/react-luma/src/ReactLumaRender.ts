@@ -8,6 +8,7 @@ function noop() {}
 export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
   const width = 1080;
   const height = width * (9 / 16);
+  console.log("viewport", width, height);
 
   const app = new PIXI.Application({
     width,

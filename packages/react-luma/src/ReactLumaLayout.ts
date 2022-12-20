@@ -17,29 +17,28 @@ function extractShortHandToPosition(style: any, name: string) {
   };
 }
 
-function appendStyle(element: ReactLumaElement) {
+function appendStyle(element: ReactLumaElement, depth: number) {
   const layout = element.yogaNode.getComputedLayout();
 
   element.displayObject.position.x = layout.left;
   element.displayObject.position.y = layout.top;
 
-  if (element.type === "Sprite") {
-    // TODO: Give this a second look...
-    element.displayObject._width = layout.width;
-    element.displayObject._height = layout.height;
+  if (element.type == "Sprite") {
+    element.displayObject.width = layout.width;
+    element.displayObject.height = layout.height;
   }
 
   const childrenCount = element.displayObject.children.length;
 
   for (let i = 0; i < childrenCount; i++) {
     const child = getElement(element.displayObject.children[i]);
-    appendStyle(child);
+    appendStyle(child, depth + 1);
   }
 }
 
 export function calculateLayout(element: ReactLumaElement) {
   element.yogaNode.calculateLayout();
-  appendStyle(element);
+  appendStyle(element, 0);
 }
 
 function setTextProps(
@@ -120,6 +119,46 @@ export function setElementProps(
     }
     if (margin.bottom) {
       element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
+    }
+  }
+}
+
+export class ReactLumaLayoutTransform extends PIXI.Transform {
+  updateTransform(parentTransform: PIXI.Transform) {
+    if (this._localID !== this._currentLocalID) {
+      this.localTransform.a = this._cx * this.scale.x;
+      this.localTransform.b = this._sx * this.scale.x;
+      this.localTransform.c = this._cy * this.scale.y;
+      this.localTransform.d = this._sy * this.scale.y;
+
+      this.localTransform.tx =
+        this.position.x -
+        (this.pivot.x * this.localTransform.a +
+          this.pivot.y * this.localTransform.c);
+
+      this.localTransform.ty =
+        this.position.y -
+        (this.pivot.x * this.localTransform.b +
+          this.pivot.y * this.localTransform.d);
+
+      this._currentLocalID = this._localID;
+      this._parentID = -1;
+    }
+
+    if (this._parentID !== parentTransform._worldID) {
+      this.worldTransform.a = this.localTransform.a;
+      this.worldTransform.b = this.localTransform.b;
+      this.worldTransform.c = this.localTransform.c;
+      this.worldTransform.d = this.localTransform.d;
+
+      this.worldTransform.tx =
+        this.localTransform.tx + parentTransform.worldTransform.tx;
+      this.worldTransform.ty =
+        this.localTransform.ty + parentTransform.worldTransform.ty;
+
+      this._parentID = parentTransform._worldID;
+
+      this._worldID += 1;
     }
   }
 }

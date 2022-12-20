@@ -1,5 +1,6 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
+import { ReactLumaLayoutTransform } from "./ReactLumaLayout";
 
 const LUMA_ELEMENT_SYMBOL = Symbol("lumaElementSymbol");
 
@@ -42,6 +43,8 @@ export function createElement(
   } else {
     displayObject = new PIXI.Container();
   }
+
+  displayObject.transform = new ReactLumaLayoutTransform();
 
   const lumaElement = {
     type,
