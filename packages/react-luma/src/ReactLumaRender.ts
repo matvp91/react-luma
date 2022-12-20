@@ -1,9 +1,9 @@
 import * as PIXI from "pixi.js";
 import { createElement } from "./ReactLumaElement";
 import { ReactLumaReconciler } from "./ReactLumaReconciler";
-import { noop } from "./utils/compact";
-import { ReactLumaElementType } from "./types";
 import type { ReactNode } from "react";
+
+function noop() {}
 
 export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
   const width = 1080;
@@ -12,13 +12,13 @@ export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
   const app = new PIXI.Application({
     width,
     height,
-    backgroundColor: PIXI.utils.string2hex("#030303"),
+    backgroundColor: PIXI.utils.string2hex("#ffffff"),
     resolution: window.devicePixelRatio,
     view: hostContainer,
   });
 
-  const rootElement = createElement(ReactLumaElementType.View);
-  app.stage.addChild(rootElement.displayElement);
+  const rootElement = createElement("View", /* isRootElement= */ true);
+  app.stage.addChild(rootElement.displayObject);
 
   const container = ReactLumaReconciler.createContainer(
     rootElement,

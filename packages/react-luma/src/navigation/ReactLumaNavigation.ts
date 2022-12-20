@@ -291,7 +291,7 @@ function getCenter(rect: Rect): Rect {
 }
 
 function getRect(element: ReactLumaElement): Rect {
-  const bounds = element.getBounds();
+  const bounds = element.displayObject.getBounds();
   return {
     element,
     left: bounds.left,

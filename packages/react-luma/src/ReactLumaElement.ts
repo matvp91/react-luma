@@ -1,67 +1,85 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
-import { setProps } from "./ReactLumaLayout";
-import { ReactLumaElementType } from "./types";
-import type { ReactLumaElementProps } from "./types";
 
-export class ReactLumaElement {
-  readonly type: ReactLumaElementType;
+const LUMA_ELEMENT_SYMBOL = Symbol("lumaElementSymbol");
 
-  readonly displayElement: PIXI.Container;
-
-  readonly layoutNode: yoga.YogaNode;
-
-  constructor(type: ReactLumaElementType) {
-    this.type = type;
-
-    this.layoutNode = yoga.Node.create();
-
-    if (type === "Text") {
-      this.displayElement = new PIXI.Text();
-    } else if (type === "Image") {
-      this.displayElement = new PIXI.Sprite();
-    } else if (type === "View") {
-      this.displayElement = new PIXI.Container();
-    } else {
-      throw new Error(`ReactLumaElement: invalid type "${type}"`);
+export type ReactLumaElement = {
+  yogaNode: yoga.YogaNode;
+  isRootElement: boolean;
+} & (
+  | {
+      type: "View";
+      displayObject: PIXI.Container;
     }
-  }
+  | {
+      type: "Text";
+      displayObject: PIXI.Text;
+    }
+  | {
+      type: "Sprite";
+      displayObject: PIXI.Sprite;
+    }
+);
 
-  appendChild(child: ReactLumaElement) {
-    this.displayElement.addChild(child.displayElement);
+export type ReactLumaElementType = ReactLumaElement["type"];
 
-    const index = this.displayElement.getChildIndex(child.displayElement);
-    this.layoutNode.insertChild(child.layoutNode, index);
+export function getElement(obj: any): ReactLumaElement {
+  if (!obj[LUMA_ELEMENT_SYMBOL]) {
+    throw new Error("Could not get luma element from unknown object.");
   }
-
-  insertBefore(child: ReactLumaElement, beforeChild: ReactLumaElement) {
-    const index = this.displayElement.getChildIndex(beforeChild.displayElement);
-    this.displayElement.addChildAt(child.displayElement, index);
-    this.layoutNode.insertChild(this.layoutNode, index);
-  }
-
-  removeChild(child: ReactLumaElement) {
-    this.displayElement.removeChild(child.displayElement);
-    this.layoutNode.removeChild(child.layoutNode);
-  }
-
-  setProps(props: ReactLumaElementProps) {
-    setProps(this, props);
-  }
-
-  getBounds() {
-    const bounds = this.displayElement.getBounds();
-    return {
-      left: bounds.left,
-      right: bounds.right,
-      top: bounds.top,
-      bottom: bounds.bottom,
-      width: bounds.width,
-      height: bounds.height,
-    };
-  }
+  return obj[LUMA_ELEMENT_SYMBOL];
 }
 
-export function createElement(type: ReactLumaElementType) {
-  return new ReactLumaElement(type);
+export function createElement(
+  type: ReactLumaElementType,
+  isRootElement: boolean = false
+): ReactLumaElement {
+  let displayObject: any;
+  if (type === "Text") {
+    displayObject = new PIXI.Text();
+  } else if (type === "Sprite") {
+    displayObject = new PIXI.Sprite();
+  } else {
+    displayObject = new PIXI.Container();
+  }
+
+  const lumaElement = {
+    type,
+    displayObject,
+    yogaNode: yoga.Node.create(),
+    isRootElement,
+  };
+
+  displayObject[LUMA_ELEMENT_SYMBOL] = lumaElement;
+
+  return lumaElement;
+}
+
+export function appendChild(
+  element: ReactLumaElement,
+  child: ReactLumaElement
+) {
+  element.displayObject.addChild(child.displayObject);
+
+  const index = element.displayObject.getChildIndex(child.displayObject);
+  element.yogaNode.insertChild(child.yogaNode, index);
+}
+
+export function insertBefore(
+  element: ReactLumaElement,
+  child: ReactLumaElement,
+  beforeChild: ReactLumaElement
+) {
+  const index = element.displayObject.getChildIndex(beforeChild.displayObject);
+
+  element.displayObject.addChildAt(child.displayObject, index);
+  element.yogaNode.insertChild(child.yogaNode, index);
+}
+
+export function removeChild(
+  element: ReactLumaElement,
+  child: ReactLumaElement
+) {
+  element.displayObject.removeChild(child.displayObject);
+  element.yogaNode.removeChild(child.yogaNode);
 }

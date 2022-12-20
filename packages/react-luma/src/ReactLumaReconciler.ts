@@ -1,27 +1,16 @@
 import createReconciler from "react-reconciler";
 import performanceNow from "performance-now";
-import invariant from "./utils/invariant";
-import { AbortableSymbol } from "./utils/compact";
-import { createElement, ReactLumaElement } from "./ReactLumaElement";
-import { calculateLayout } from "./ReactLumaLayout";
-import { ReactLumaElementProps, ReactLumaElementType } from "./types";
+import {
+  createElement,
+  appendChild,
+  insertBefore,
+  removeChild,
+} from "./ReactLumaElement";
+import { setElementProps, calculateLayout } from "./ReactLumaLayout";
 
 const NO_CONTEXT = {};
 
-export const ReactLumaReconciler = createReconciler<
-  ReactLumaElementType,
-  ReactLumaElementProps,
-  ReactLumaElement,
-  ReactLumaElement,
-  ReactLumaElement,
-  unknown,
-  unknown,
-  unknown,
-  unknown,
-  unknown,
-  unknown,
-  unknown
->({
+export const ReactLumaReconciler = createReconciler({
   now: performanceNow,
 
   getRootHostContext() {
@@ -49,22 +38,17 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   createTextInstance(text) {
-    invariant(
-      false,
-      'react-luma: Error trying to add text node "' + text + '"',
-      "If you wish to display some text, use &lt;Text text={string} /&gt; instead."
-    );
-    throw AbortableSymbol;
+    throw new Error("createTextInstance is unsupported.");
   },
 
   createInstance(type, newProps) {
     const element = createElement(type);
-    element.setProps(newProps);
+    setElementProps(element, newProps);
     return element;
   },
 
   appendInitialChild(parent, child) {
-    parent.appendChild(child);
+    appendChild(parent, child);
   },
 
   finalizeInitialChildren() {
@@ -76,7 +60,7 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendChildToContainer(parent, child) {
-    parent.appendChild(child);
+    appendChild(parent, child);
     calculateLayout(parent);
   },
 
@@ -87,7 +71,7 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   commitUpdate(instance, updatePayload, type, oldProps, newProps) {
-    instance.setProps(newProps);
+    setElementProps(instance, newProps);
   },
 
   commitTextUpdate() {
@@ -95,23 +79,23 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendChild(parent, child) {
-    parent.appendChild(child);
+    appendChild(parent, child);
   },
 
   insertBefore(instance, child, beforeChild) {
-    instance.insertBefore(child, beforeChild);
+    insertBefore(instance, child, beforeChild);
   },
 
   removeChild(instance, child) {
-    instance.removeChild(child);
+    removeChild(instance, child);
   },
 
   insertInContainerBefore(container, child, beforeChild) {
-    container.insertBefore(child, beforeChild);
+    insertBefore(container, child, beforeChild);
   },
 
   removeChildFromContainer(container, child) {
-    container.removeChild(child);
+    removeChild(container, child);
   },
 
   resetTextContent() {

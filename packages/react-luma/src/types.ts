@@ -1,10 +1,5 @@
+import * as PIXI from "pixi.js";
 import type { ReactNode } from "react";
-
-export enum ReactLumaElementType {
-  View = "View",
-  Image = "Image",
-  Text = "Text",
-}
 
 export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
@@ -22,24 +17,25 @@ export type ReactLumaElementStyle = {
   height?: number;
 };
 
-export type ReactLumaViewProps = {
+export type ReactLumaElementProps = {
   style?: ReactLumaElementStyle;
   children?: ReactNode;
 };
 
-export type ReactLumaTextProps = {
+export type ReactLumaTextElementProps = {
   style?: ReactLumaElementStyle;
-  color?: string;
   text: string;
 };
 
-export type ReactLumaImageProps = {
+export type ReactLumaSpriteElementProps = {
   style?: ReactLumaElementStyle;
-  tint?: string;
-  src: string;
+  children?: ReactNode;
+  fill?: string;
+  texture?: PIXI.Texture;
+  tint?: number;
 };
 
-export type ReactLumaElementProps =
-  | ReactLumaViewProps
-  | ReactLumaTextProps
-  | ReactLumaImageProps;
+export type ReactLumaImageElementProps = {
+  style?: ReactLumaElementStyle;
+  src: string;
+};
