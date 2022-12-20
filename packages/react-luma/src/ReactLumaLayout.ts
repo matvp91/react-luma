@@ -78,10 +78,6 @@ function setStyleToLayoutNode(
     layoutNode.setFlexDirection(yoga.FLEX_DIRECTION_COLUMN);
   }
 
-  if (style.left) {
-    layoutNode.setPosition(yoga.EDGE_LEFT, style.left);
-  }
-
   if (style.width) {
     layoutNode.setWidth(style.width);
   }

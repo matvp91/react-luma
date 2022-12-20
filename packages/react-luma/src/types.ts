@@ -8,7 +8,6 @@ export enum ReactLumaElementType {
 
 export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
-  left?: number;
   padding?: number;
   paddingLeft?: number;
   paddingRight?: number;
