@@ -1,5 +1,11 @@
 import type { ReactNode } from "react";
 
+export enum ReactLumaElementType {
+  View = "View",
+  Image = "Image",
+  Text = "Text",
+}
+
 export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
   left?: number;

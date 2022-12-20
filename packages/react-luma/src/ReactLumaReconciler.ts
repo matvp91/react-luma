@@ -1,12 +1,27 @@
 import createReconciler from "react-reconciler";
 import performanceNow from "performance-now";
 import invariant from "./utils/invariant";
-import { createElement } from "./ReactLumaElement";
+import { AbortableSymbol } from "./utils/compact";
+import { createElement, ReactLumaElement } from "./ReactLumaElement";
 import { calculateLayout } from "./ReactLumaLayout";
+import { ReactLumaElementProps, ReactLumaElementType } from "./types";
 
 const NO_CONTEXT = {};
 
-export const ReactLumaReconciler = createReconciler({
+export const ReactLumaReconciler = createReconciler<
+  ReactLumaElementType,
+  ReactLumaElementProps,
+  ReactLumaElement,
+  ReactLumaElement,
+  ReactLumaElement,
+  unknown,
+  unknown,
+  unknown,
+  unknown,
+  unknown,
+  unknown,
+  unknown
+>({
   now: performanceNow,
 
   getRootHostContext() {
@@ -15,10 +30,6 @@ export const ReactLumaReconciler = createReconciler({
 
   getChildHostContext() {
     return NO_CONTEXT;
-  },
-
-  getChildHostContextForEventComponent(parentHostContext) {
-    return parentHostContext;
   },
 
   getPublicInstance(instance) {
@@ -43,6 +54,7 @@ export const ReactLumaReconciler = createReconciler({
       'react-luma: Error trying to add text node "' + text + '"',
       "If you wish to display some text, use &lt;Text text={string} /&gt; instead."
     );
+    throw AbortableSymbol;
   },
 
   createInstance(type, newProps) {
@@ -109,4 +121,20 @@ export const ReactLumaReconciler = createReconciler({
   shouldDeprioritizeSubtree() {
     return false;
   },
+
+  scheduleDeferredCallback() {},
+
+  cancelDeferredCallback() {},
+
+  setTimeout() {},
+
+  clearTimeout() {},
+
+  noTimeout: undefined,
+
+  isPrimaryRenderer: true,
+
+  supportsPersistence: false,
+
+  supportsHydration: false,
 });

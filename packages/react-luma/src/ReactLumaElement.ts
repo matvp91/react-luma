@@ -1,9 +1,8 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { setProps } from "./ReactLumaLayout";
+import { ReactLumaElementType } from "./types";
 import type { ReactLumaElementProps } from "./types";
-
-export type ReactLumaElementType = "View" | "Text" | "Image";
 
 export class ReactLumaElement {
   readonly type: ReactLumaElementType;
@@ -29,15 +28,21 @@ export class ReactLumaElement {
   }
 
   appendChild(child: ReactLumaElement) {
-    appendChildToElement(this, child);
+    this.displayElement.addChild(child.displayElement);
+
+    const index = this.displayElement.getChildIndex(child.displayElement);
+    this.layoutNode.insertChild(child.layoutNode, index);
   }
 
   insertBefore(child: ReactLumaElement, beforeChild: ReactLumaElement) {
-    insertBeforeInElement(this, child, beforeChild);
+    const index = this.displayElement.getChildIndex(beforeChild.displayElement);
+    this.displayElement.addChildAt(child.displayElement, index);
+    this.layoutNode.insertChild(this.layoutNode, index);
   }
 
   removeChild(child: ReactLumaElement) {
-    removeChildFromElement(this, child);
+    this.displayElement.removeChild(child.displayElement);
+    this.layoutNode.removeChild(child.layoutNode);
   }
 
   setProps(props: ReactLumaElementProps) {
@@ -59,34 +64,4 @@ export class ReactLumaElement {
 
 export function createElement(type: ReactLumaElementType) {
   return new ReactLumaElement(type);
-}
-
-function appendChildToElement(
-  element: ReactLumaElement,
-  child: ReactLumaElement
-) {
-  element.displayElement.addChild(child.displayElement);
-
-  const index = element.displayElement.getChildIndex(child.displayElement);
-  element.layoutNode.insertChild(child.layoutNode, index);
-}
-
-function removeChildFromElement(
-  element: ReactLumaElement,
-  child: ReactLumaElement
-) {
-  element.displayElement.removeChild(child.displayElement);
-  element.layoutNode.removeChild(child.layoutNode);
-}
-
-function insertBeforeInElement(
-  element: ReactLumaElement,
-  child: ReactLumaElement,
-  beforeChild: ReactLumaElement
-) {
-  const index = element.displayElement.getChildIndex(
-    beforeChild.displayElement
-  );
-  element.displayElement.addChildAt(child.displayElement, index);
-  element.layoutNode.insertChild(element.layoutNode, index);
 }

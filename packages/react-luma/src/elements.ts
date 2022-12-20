@@ -1,23 +1,20 @@
 import React, { forwardRef } from "react";
-import type {
+import {
   ReactLumaViewProps,
   ReactLumaTextProps,
   ReactLumaImageProps,
+  ReactLumaElementType,
 } from "./types";
 
-const VIEW = "View";
-const TEXT = "Text";
-const IMAGE = "Image";
-
 export const ReactLumaView = forwardRef((props: ReactLumaViewProps, ref) => {
-  return React.createElement(VIEW, {
+  return React.createElement(ReactLumaElementType.View, {
     ...props,
     ref,
   });
 });
 
 export const ReactLumaText = (props: ReactLumaTextProps) =>
-  React.createElement(TEXT, props);
+  React.createElement(ReactLumaElementType.Text, props);
 
 export const ReactLumaImage = (props: ReactLumaImageProps) =>
-  React.createElement(IMAGE, props);
+  React.createElement(ReactLumaElementType.Image, props);

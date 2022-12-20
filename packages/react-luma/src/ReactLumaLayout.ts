@@ -27,20 +27,23 @@ export function shortToPosition(
   };
 }
 
+function displayElementRequiresDimensions(displayElement: PIXI.Container) {
+  if (displayElement instanceof PIXI.Text) {
+    return false;
+  }
+  return displayElement instanceof PIXI.Sprite;
+}
+
 function appendStyle(
-  displayElement: ReactLumaElement["displayElement"],
-  layoutNode: ReactLumaElement["layoutNode"]
+  displayElement: PIXI.Container,
+  layoutNode: yoga.YogaNode
 ) {
   const layout = layoutNode.getComputedLayout();
 
   displayElement.position.x = layout.left;
   displayElement.position.y = layout.top;
 
-  // TODO: This is a very messy check. Make it explicit.
-  if (
-    displayElement instanceof PIXI.Sprite &&
-    !(displayElement instanceof PIXI.Text)
-  ) {
+  if (displayElementRequiresDimensions(displayElement)) {
     displayElement.width = layout.width;
     displayElement.height = layout.height;
   }
@@ -48,7 +51,10 @@ function appendStyle(
   for (let i = 0; i < displayElement.children.length; i++) {
     const childDisplayElement = displayElement.children[i];
     const childLayoutNode = layoutNode.getChild(i);
-    appendStyle(childDisplayElement as PIXI.Container, childLayoutNode);
+
+    if (childDisplayElement instanceof PIXI.Container) {
+      appendStyle(childDisplayElement, childLayoutNode);
+    }
   }
 }
 
@@ -59,9 +65,11 @@ export function calculateLayout(element: ReactLumaElement) {
 }
 
 function setStyleToLayoutNode(
-  layoutNode: yoga.YogaNode,
+  element: ReactLumaElement,
   style: ReactLumaElementStyle
 ) {
+  const layoutNode = element.layoutNode;
+
   layoutNode.setDisplay(yoga.DISPLAY_FLEX);
 
   if (style.flexDirection === "row") {
@@ -110,11 +118,10 @@ function setStyleToLayoutNode(
   }
 }
 
-function setTextProps(
-  displayElement: PIXI.Text,
-  layoutNode: yoga.YogaNode,
-  props: ReactLumaTextProps
-) {
+function setTextProps(element: ReactLumaElement, props: ReactLumaTextProps) {
+  const displayElement = element.displayElement as PIXI.Text;
+  const layoutNode = element.layoutNode;
+
   displayElement.text = props.text ?? "";
 
   if (props.color) {
@@ -126,10 +133,9 @@ function setTextProps(
   layoutNode.setHeight(bounds.height);
 }
 
-function setImageProps(
-  displayElement: PIXI.Sprite,
-  props: ReactLumaImageProps
-) {
+function setImageProps(element: ReactLumaElement, props: ReactLumaImageProps) {
+  const displayElement = element.displayElement as PIXI.Sprite;
+
   if (props.tint) {
     displayElement.tint = PIXI.utils.string2hex(props.tint);
   }
@@ -146,21 +152,14 @@ export function setProps(
   props: ReactLumaElementProps
 ) {
   if (props.style) {
-    setStyleToLayoutNode(element.layoutNode, props.style);
+    setStyleToLayoutNode(element, props.style);
   }
 
   if (element.type === "Text") {
-    setTextProps(
-      element.displayElement as PIXI.Text,
-      element.layoutNode,
-      props as ReactLumaTextProps
-    );
+    setTextProps(element, props as ReactLumaTextProps);
   }
 
   if (element.type === "Image") {
-    setImageProps(
-      element.displayElement as PIXI.Sprite,
-      props as ReactLumaImageProps
-    );
+    setImageProps(element, props as ReactLumaImageProps);
   }
 }
