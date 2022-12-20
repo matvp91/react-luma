@@ -26,8 +26,11 @@ export const ReactLumaText =
 export const ReactLumaSprite = forwardRef(
   (props: ReactLumaSpriteElementProps, ref) => {
     const tint = useMemo(() => {
-      return PIXI.utils.string2hex(props.tint);
-    }, [props.tint]);
+      if (!props.backgroundColor) {
+        return undefined;
+      }
+      return PIXI.utils.string2hex(props.backgroundColor);
+    }, [props.backgroundColor]);
 
     return React.createElement("Sprite", {
       ...props,

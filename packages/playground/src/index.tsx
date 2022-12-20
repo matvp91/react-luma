@@ -37,10 +37,15 @@ function Swimlane(props: SwimlaneProps) {
           {items.map((item) => (
             <Focusable key={item.id}>
               {(hasFocus) => (
-                <Image
-                  src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                  style={{ marginRight: 12, width: 100, height: 150 }}
-                />
+                <Sprite
+                  style={{ padding: 6 }}
+                  backgroundColor={hasFocus ? "#ff0000" : "#00ff00"}
+                >
+                  <Image
+                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                    style={{ width: 100, height: 150 }}
+                  />
+                </Sprite>
               )}
             </Focusable>
           ))}
@@ -98,12 +103,12 @@ function App() {
             title="Top on TV"
             tmdbPath="/tv/popular"
           />
-          {/* <Swimlane
+          <Swimlane
             id="swimlane_upcoming_movies"
             title="Upcoming movies"
             tmdbPath="/movie/upcoming"
           />
-          <Swimlane
+          {/* <Swimlane
             id="swimlane_toprated_tv"
             title="Top rated TV"
             tmdbPath="/tv/top_rated"

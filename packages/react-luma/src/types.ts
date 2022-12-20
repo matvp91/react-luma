@@ -33,6 +33,9 @@ export type ReactLumaSpriteElementProps = {
   fill?: string;
   texture?: PIXI.Texture;
   tint?: number;
+
+  // TODO: Wrong, we have no type split between internal sprite and public sprite.
+  backgroundColor?: string;
 };
 
 export type ReactLumaImageElementProps = {

@@ -1,3 +1,4 @@
+import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { getElement } from "./ReactLumaElement";
 import type { ReactLumaElement } from "./ReactLumaElement";
@@ -7,6 +8,15 @@ import type {
   ReactLumaTextElementProps,
 } from "./types";
 
+function extractShortHandToPosition(style: any, name: string) {
+  return {
+    left: style[`${name}Left`] || style[name] || 0,
+    right: style[`${name}Right`] || style[name] || 0,
+    top: style[`${name}Top`] || style[name] || 0,
+    bottom: style[`${name}Bottom`] || style[name] || 0,
+  };
+}
+
 function appendStyle(element: ReactLumaElement) {
   const layout = element.yogaNode.getComputedLayout();
 
@@ -14,8 +24,9 @@ function appendStyle(element: ReactLumaElement) {
   element.displayObject.position.y = layout.top;
 
   if (element.type === "Sprite") {
-    element.displayObject.width = layout.width;
-    element.displayObject.height = layout.height;
+    // TODO: Give this a second look...
+    element.displayObject._width = layout.width;
+    element.displayObject._height = layout.height;
   }
 
   const childrenCount = element.displayObject.children.length;
@@ -50,6 +61,7 @@ function setSpriteProps(
     element.displayObject.texture = props.texture;
   }
   if (props.tint) {
+    element.displayObject.texture = PIXI.Texture.WHITE;
     element.displayObject.tint = props.tint;
   }
 }
@@ -80,6 +92,34 @@ export function setElementProps(
     }
     if (props.style.height) {
       element.yogaNode.setHeight(props.style.height);
+    }
+
+    const padding = extractShortHandToPosition(props.style, "padding");
+    if (padding.left) {
+      element.yogaNode.setPadding(yoga.EDGE_LEFT, padding.left);
+    }
+    if (padding.right) {
+      element.yogaNode.setPadding(yoga.EDGE_RIGHT, padding.right);
+    }
+    if (padding.top) {
+      element.yogaNode.setPadding(yoga.EDGE_TOP, padding.top);
+    }
+    if (padding.bottom) {
+      element.yogaNode.setPadding(yoga.EDGE_BOTTOM, padding.bottom);
+    }
+
+    const margin = extractShortHandToPosition(props.style, "margin");
+    if (margin.left) {
+      element.yogaNode.setMargin(yoga.EDGE_LEFT, margin.left);
+    }
+    if (margin.right) {
+      element.yogaNode.setMargin(yoga.EDGE_RIGHT, margin.right);
+    }
+    if (margin.top) {
+      element.yogaNode.setMargin(yoga.EDGE_TOP, margin.top);
+    }
+    if (margin.bottom) {
+      element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
     }
   }
 }
