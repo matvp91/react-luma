@@ -1,5 +1,5 @@
 import React, { useContext, useRef, useLayoutEffect } from "react";
-import { View } from "../../elements";
+import { View } from "../../";
 import { FocusSectionContext } from "./FocusSection";
 import { NavProviderContext } from "./NavProvider";
 import type { ReactNode } from "react";

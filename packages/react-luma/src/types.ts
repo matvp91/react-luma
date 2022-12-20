@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
 
-export type ElementStyle = {
+export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
   left?: number;
   padding?: number;
@@ -17,19 +17,24 @@ export type ElementStyle = {
   height?: number;
 };
 
-export type ViewProps = {
-  style?: ElementStyle;
+export type ReactLumaViewProps = {
+  style?: ReactLumaElementStyle;
   children?: ReactNode;
 };
 
-export type TextProps = {
-  style?: ElementStyle;
+export type ReactLumaTextProps = {
+  style?: ReactLumaElementStyle;
   color?: string;
   text: string;
 };
 
-export type ImageProps = {
-  style?: ElementStyle;
+export type ReactLumaImageProps = {
+  style?: ReactLumaElementStyle;
   tint?: string;
   src: string;
 };
+
+export type ReactLumaElementProps =
+  | ReactLumaViewProps
+  | ReactLumaTextProps
+  | ReactLumaImageProps;
