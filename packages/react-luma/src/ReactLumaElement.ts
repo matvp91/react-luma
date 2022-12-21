@@ -1,8 +1,14 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { patchLayoutTransform } from "./utils/pixi";
+import { ReactLumaElementNonExistent } from "./errors";
+import type { ReactLumaOpaqueValue } from "./types";
 
-const LUMA_ELEMENT_SYMBOL = Symbol("lumaElementSymbol");
+// Key used to store a pointer to the current ReactLumaElement,
+// not meant to be used directly but rather use getElement(<any object>)
+// which will throw an error if you request the element on an
+// object where it does not exist.
+const LumaElementInternalKey = "__lumaElement";
 
 export type ReactLumaElement = {
   yogaNode: yoga.YogaNode;
@@ -23,11 +29,11 @@ export type ReactLumaElement = {
 
 export type ReactLumaElementType = ReactLumaElement["type"];
 
-export function getElement(obj: any): ReactLumaElement {
-  if (!obj[LUMA_ELEMENT_SYMBOL]) {
-    throw new Error("Could not get luma element from unknown object.");
+export function getElement(obj: ReactLumaOpaqueValue): ReactLumaElement {
+  if (!obj[LumaElementInternalKey]) {
+    throw new ReactLumaElementNonExistent(obj);
   }
-  return obj[LUMA_ELEMENT_SYMBOL];
+  return obj[LumaElementInternalKey];
 }
 
 export function createElement(type: ReactLumaElementType): ReactLumaElement {
@@ -48,7 +54,7 @@ export function createElement(type: ReactLumaElementType): ReactLumaElement {
     yogaNode: yoga.Node.create(),
   };
 
-  displayObject[LUMA_ELEMENT_SYMBOL] = lumaElement;
+  displayObject[LumaElementInternalKey] = lumaElement;
 
   return lumaElement;
 }

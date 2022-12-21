@@ -25,6 +25,10 @@ interface ReactLumaHostContext {}
 
 const NO_CONTEXT: ReactLumaHostContext = {};
 
+const STYLE = "style";
+const CHILDREN = "children";
+const TRANSFORM = "transform";
+
 let requiresRecalculateLayout = true;
 
 function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
@@ -185,11 +189,11 @@ function diffProperties(lastProps: any, nextProps: any) {
       continue;
     }
 
-    if (propKey === "children") {
+    if (propKey === CHILDREN) {
       continue;
     }
 
-    if (propKey === "style" || propKey === "transform") {
+    if (propKey === STYLE || propKey === TRANSFORM) {
       if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
         continue;
       }
@@ -213,11 +217,11 @@ function diffProperties(lastProps: any, nextProps: any) {
       continue;
     }
 
-    if (propKey === "children") {
+    if (propKey === CHILDREN) {
       continue;
     }
 
-    if (propKey === "style" || propKey === "transform") {
+    if (propKey === STYLE || propKey === TRANSFORM) {
       if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
         continue;
       }

@@ -65,6 +65,8 @@ export type ReactLumaElementTextProps = {
   fill?: string;
 };
 
+export type ReactLumaOpaqueValue = any;
+
 declare global {
   namespace JSX {
     interface IntrinsicElements {
