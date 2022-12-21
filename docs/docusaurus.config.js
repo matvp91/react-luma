@@ -28,10 +28,7 @@ const config = {
           sidebarPath: require.resolve("./sidebars.js"),
           editUrl: "https://github.com/matvp91/react-luma/tree/main/docs/docs/",
         },
-        blog: {
-          showReadingTime: true,
-          editUrl: "https://github.com/matvp91/react-luma/tree/main/docs/blog/",
-        },
+
         theme: {
           customCss: require.resolve("./src/css/custom.css"),
         },
@@ -80,19 +77,6 @@ const config = {
               {
                 label: "Support",
                 href: "https://github.com/matvp91/react-luma/issues",
-              },
-            ],
-          },
-          {
-            title: "More",
-            items: [
-              {
-                label: "Blog",
-                to: "/blog",
-              },
-              {
-                label: "GitHub",
-                href: "https://github.com/matvp91/react-luma",
               },
             ],
           },
