@@ -4,7 +4,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "React Luma",
-  tagline: "A WebGL renderer for user interfaces with React",
+  tagline: "React Luma is a custom React renderer to build WebGL apps.",
   url: "https://react-luma.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
@@ -44,18 +44,13 @@ const config = {
     ({
       navbar: {
         title: "React Luma",
-        logo: {
-          alt: "React Luma logo",
-          src: "img/logo.svg",
-        },
         items: [
           {
             type: "doc",
             docId: "intro",
             position: "left",
-            label: "Tutorial",
+            label: "Documentation",
           },
-          { to: "/blog", label: "Blog", position: "left" },
           {
             href: "https://github.com/matvp91/react-luma",
             label: "GitHub",
@@ -64,7 +59,6 @@ const config = {
         ],
       },
       footer: {
-        style: "dark",
         links: [
           {
             title: "Docs",

@@ -4,6 +4,8 @@ import Link from "@docusaurus/Link";
 import useDocusaurusContext from "@docusaurus/useDocusaurusContext";
 import Layout from "@theme/Layout";
 import Playground from "@site/src/components/Playground";
+import cx from "classnames";
+import CodeBlock from "@theme/CodeBlock";
 import styles from "./index.module.css";
 
 function HomepageHeader() {
@@ -35,7 +37,12 @@ export default function Home(): JSX.Element {
     >
       <HomepageHeader />
       <main>
-        <div className={styles.playground}>
+        <div className={cx("container", styles.container)}>
+          <p>
+            Build your scene declaratively with re-usable, self-contained
+            components and render them in a WebGL canvas.
+          </p>
+          <CodeBlock>npm install react-luma</CodeBlock>
           <Playground />
         </div>
       </main>
