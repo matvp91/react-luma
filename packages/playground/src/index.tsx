@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from "react";
-import { render, View, Text, Sprite, Image } from "react-luma";
+import { useState, useEffect } from "react";
+import { render, View, Text, Sprite, Image, TEXTURE_WHITE } from "react-luma";
 import { NavProvider, FocusSection, Focusable } from "react-luma/navigation";
 
 const TMDB_API_KEY = "fbba46e1c3147f982c3b7d32995add6b";
@@ -39,7 +39,8 @@ function Swimlane(props: SwimlaneProps) {
               {(hasFocus) => (
                 <Sprite
                   style={{ padding: 6 }}
-                  backgroundColor={hasFocus ? "#ff0000" : "#ffffff"}
+                  tint={hasFocus ? "#ff0000" : "#ffffff"}
+                  texture={TEXTURE_WHITE}
                 >
                   <Image
                     src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}

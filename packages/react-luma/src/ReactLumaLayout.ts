@@ -3,9 +3,9 @@ import yoga from "@react-pdf/yoga";
 import { getElement } from "./ReactLumaElement";
 import type { ReactLumaElement } from "./ReactLumaElement";
 import type {
-  ReactLumaElementProps,
-  ReactLumaSpriteElementProps,
-  ReactLumaTextElementProps,
+  ReactLumaElementCommonProps,
+  ReactLumaElementSpriteProps,
+  ReactLumaElementTextProps,
 } from "./types";
 
 function extractShortHandToPosition(style: any, name: string) {
@@ -43,7 +43,7 @@ export function calculateLayout(element: ReactLumaElement) {
 
 function setTextProps(
   element: Extract<ReactLumaElement, { type: "Text" }>,
-  props: ReactLumaTextElementProps
+  props: ReactLumaElementTextProps
 ) {
   element.displayObject.text = props.text;
 
@@ -54,27 +54,26 @@ function setTextProps(
 
 function setSpriteProps(
   element: Extract<ReactLumaElement, { type: "Sprite" }>,
-  props: ReactLumaSpriteElementProps
+  props: ReactLumaElementSpriteProps
 ) {
   if (props.texture) {
     element.displayObject.texture = props.texture;
   }
   if (props.tint) {
-    element.displayObject.texture = PIXI.Texture.WHITE;
-    element.displayObject.tint = props.tint;
+    element.displayObject.tint = PIXI.utils.string2hex(props.tint);
   }
 }
 
 export function setElementProps(
   element: ReactLumaElement,
-  props: ReactLumaElementProps
+  props: ReactLumaElementCommonProps
 ) {
   if (element.type === "Text") {
-    setTextProps(element, props as ReactLumaTextElementProps);
+    setTextProps(element, props as ReactLumaElementTextProps);
   }
 
   if (element.type === "Sprite") {
-    setSpriteProps(element, props as ReactLumaSpriteElementProps);
+    setSpriteProps(element, props as ReactLumaElementSpriteProps);
   }
 
   if (props.style) {
@@ -119,46 +118,6 @@ export function setElementProps(
     }
     if (margin.bottom) {
       element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
-    }
-  }
-}
-
-export class ReactLumaLayoutTransform extends PIXI.Transform {
-  updateTransform(parentTransform: PIXI.Transform) {
-    if (this._localID !== this._currentLocalID) {
-      this.localTransform.a = this._cx * this.scale.x;
-      this.localTransform.b = this._sx * this.scale.x;
-      this.localTransform.c = this._cy * this.scale.y;
-      this.localTransform.d = this._sy * this.scale.y;
-
-      this.localTransform.tx =
-        this.position.x -
-        (this.pivot.x * this.localTransform.a +
-          this.pivot.y * this.localTransform.c);
-
-      this.localTransform.ty =
-        this.position.y -
-        (this.pivot.x * this.localTransform.b +
-          this.pivot.y * this.localTransform.d);
-
-      this._currentLocalID = this._localID;
-      this._parentID = -1;
-    }
-
-    if (this._parentID !== parentTransform._worldID) {
-      this.worldTransform.a = this.localTransform.a;
-      this.worldTransform.b = this.localTransform.b;
-      this.worldTransform.c = this.localTransform.c;
-      this.worldTransform.d = this.localTransform.d;
-
-      this.worldTransform.tx =
-        this.localTransform.tx + parentTransform.worldTransform.tx;
-      this.worldTransform.ty =
-        this.localTransform.ty + parentTransform.worldTransform.ty;
-
-      this._parentID = parentTransform._worldID;
-
-      this._worldID += 1;
     }
   }
 }

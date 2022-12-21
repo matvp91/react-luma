@@ -1,4 +1,4 @@
-import React, { useContext, useRef, useLayoutEffect } from "react";
+import { useContext, useRef, useLayoutEffect } from "react";
 import { View } from "../../";
 import { FocusSectionContext } from "./FocusSection";
 import { NavProviderContext } from "./NavProvider";

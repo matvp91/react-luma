@@ -1,18 +1,13 @@
+import * as PIXI from "pixi.js";
+
+export * from "./types";
+
 export { render } from "./ReactLumaRender";
 
-export {
-  ReactLumaView as View,
-  ReactLumaText as Text,
-  ReactLumaSprite as Sprite,
-  ReactLumaImage as Image,
-} from "./elements";
+export const View = "View";
+export const Text = "Text";
+export const Sprite = "Sprite";
 
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      View: {
-        test: string;
-      };
-    }
-  }
-}
+export { default as Image } from "./components/Image";
+
+export const TEXTURE_WHITE = PIXI.Texture.WHITE;
