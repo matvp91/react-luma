@@ -1,8 +1,9 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { getElement } from "./ReactLumaElement";
+import * as t from "typed-assert";
 import type { ReactLumaElement } from "./ReactLumaElement";
-import type { ReactLumaElementCommonProps } from "./types";
+import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
 function extractShortHandToPosition(style: any, name: string) {
   return {
@@ -42,12 +43,8 @@ export function calculateLayout(element: ReactLumaElement) {
 
 export function setElementStyle(
   element: ReactLumaElement,
-  style: ReactLumaElementCommonProps["style"]
+  style: ReactLumaElementStyle
 ) {
-  if (!style) {
-    return;
-  }
-
   element.yogaNode.setDisplay(yoga.DISPLAY_FLEX);
 
   if (style.flexDirection === "row") {
@@ -101,7 +98,7 @@ export function setElementStyle(
 
 export function setElementTransform(
   element: ReactLumaElement,
-  transform: ReactLumaElementCommonProps["transform"]
+  transform: ReactLumaElementTransform
 ) {
   if (!transform) {
     return;
@@ -118,33 +115,41 @@ export function setElementAttribute(
   value: unknown
 ) {
   if (element.type === "Text") {
-    if (key === "text") {
+    if (key === "text" && value !== undefined) {
+      t.isString(value, `Text ${key}=${value} is not a string.`);
       element.displayObject.text = value;
 
-      // Set the new bounds for the new text.
-      // TODO: setElementStyle instead of accessing yogaNode here.
       const localBounds = element.displayObject.getLocalBounds();
       element.yogaNode.setWidth(localBounds.width);
       element.yogaNode.setHeight(localBounds.height);
     }
-    if (key === "fill" && value) {
+    if (key === "fill" && value !== undefined) {
+      t.isString(value, `Text ${key}=${value} is not a string.`);
       element.displayObject.style.fill = PIXI.utils.string2hex(value);
     }
   }
 
   if (element.type === "Sprite") {
-    if (key === "texture" && value) {
+    if (key === "texture" && value !== undefined) {
+      t.isInstanceOf(value, PIXI.Texture, `Sprite ${key} is not a texture.`);
+
       element.displayObject.texture = value;
-      if (element.yogaNode.isDirty()) {
-        element.yogaNode.calculateLayout();
-      }
-      const layout = element.yogaNode.getComputedLayout();
+
+      const layout = ensureYogaNodeLayout(element.yogaNode);
       element.displayObject.width = layout.width;
       element.displayObject.height = layout.height;
     }
 
-    if (key === "tint" && value) {
+    if (key === "tint" && value !== undefined) {
+      t.isString(value, `Sprite ${key}=${value} is not a string.`);
       element.displayObject.tint = PIXI.utils.string2hex(value);
     }
   }
+}
+
+function ensureYogaNodeLayout(yogaNode: yoga.YogaNode) {
+  if (yogaNode.isDirty()) {
+    yogaNode.calculateLayout();
+  }
+  return yogaNode.getComputedLayout();
 }

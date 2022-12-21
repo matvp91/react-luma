@@ -1,3 +1,4 @@
+import React from "react";
 import createReconciler from "react-reconciler";
 import { DefaultEventPriority } from "react-reconciler/constants";
 import {
@@ -14,6 +15,7 @@ import {
   setElementTransform,
   calculateLayout,
 } from "./ReactLumaLayout";
+import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
 interface ReactLumaGenericProps {
   [key: string]: unknown;
@@ -23,7 +25,23 @@ interface ReactLumaHostContext {}
 
 const NO_CONTEXT: ReactLumaHostContext = {};
 
-let recalcLayout = false;
+let requiresRecalculateLayout = true;
+
+function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "children") {
+      continue;
+    } else if (key === "style") {
+      requiresRecalculateLayout = true;
+
+      setElementStyle(element, value as ReactLumaElementStyle);
+    } else if (key === "transform") {
+      setElementTransform(element, value as ReactLumaElementTransform);
+    } else {
+      setElementAttribute(element, key, value);
+    }
+  }
+}
 
 export const ReactLumaReconciler = createReconciler<
   ReactLumaElementType,
@@ -44,30 +62,18 @@ export const ReactLumaReconciler = createReconciler<
   supportsMutation: true,
   supportsPersistence: false,
 
-  createInstance(type, props, rootContainer, hostContext, internalHandle) {
+  createInstance(type, props) {
     const element = createElement(type);
-
-    for (const [key, value] of Object.entries(props)) {
-      if (key === "children") {
-        continue;
-      } else if (key === "style") {
-        setElementStyle(element, value);
-      } else if (key === "transform") {
-        setElementTransform(element, value);
-      } else {
-        setElementAttribute(element, key, value);
-      }
-    }
-
+    setProps(element, props);
     return element;
   },
 
-  createTextInstance(text, rootContainer, hostContext, internalHandle) {
+  createTextInstance() {
     throw new Error("createTextInstance is unsupported.");
   },
 
   appendInitialChild(parentInstance, child) {
-    recalcLayout = true;
+    requiresRecalculateLayout = true;
     appendChild(parentInstance, child);
   },
 
@@ -79,7 +85,7 @@ export const ReactLumaReconciler = createReconciler<
     removeChild(parentInstance, child);
   },
 
-  finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
+  finalizeInitialChildren() {
     return false;
   },
 
@@ -95,52 +101,27 @@ export const ReactLumaReconciler = createReconciler<
     removeChild(container, child);
   },
 
-  clearContainer(container) {
+  clearContainer() {
     return false;
   },
 
-  prepareUpdate(
-    instance,
-    type,
-    oldProps,
-    newProps,
-    rootContainer,
-    hostContext
-  ) {
+  prepareUpdate(instance, type, oldProps, newProps) {
     return diffProperties(oldProps, newProps);
   },
 
-  commitUpdate(
-    instance,
-    updatePayload,
-    type,
-    prevProps,
-    nextProps,
-    internalHandle
-  ) {
-    for (const [key, value] of Object.entries(updatePayload)) {
-      if (key === "children") {
-        continue;
-      } else if (key === "style") {
-        recalcLayout = true;
-        setElementStyle(instance, value);
-      } else if (key === "transform") {
-        setElementTransform(instance, value);
-      } else {
-        setElementAttribute(instance, key, value);
-      }
-    }
+  commitUpdate(instance, updatePayload) {
+    setProps(instance, updatePayload);
   },
 
-  shouldSetTextContent(type, props) {
+  shouldSetTextContent() {
     return false;
   },
 
-  getRootHostContext(rootContainer) {
+  getRootHostContext() {
     return NO_CONTEXT;
   },
 
-  getChildHostContext(parentHostContext, type, rootContainer) {
+  getChildHostContext() {
     return NO_CONTEXT;
   },
 
@@ -148,19 +129,18 @@ export const ReactLumaReconciler = createReconciler<
     return instance;
   },
 
-  prepareForCommit(containerInfo) {
+  prepareForCommit() {
     return null;
   },
 
   resetAfterCommit(containerInfo) {
-    if (recalcLayout) {
-      console.log("calculate");
-      recalcLayout = false;
+    if (requiresRecalculateLayout) {
+      requiresRecalculateLayout = false;
       calculateLayout(containerInfo);
     }
   },
 
-  preparePortalMount(containerInfo) {
+  preparePortalMount() {
     return null;
   },
 
@@ -194,7 +174,7 @@ export const ReactLumaReconciler = createReconciler<
 });
 
 function diffProperties(lastProps: any, nextProps: any) {
-  let updatePayload = null;
+  let updatePayload: ReactLumaGenericProps | null = null;
 
   for (let propKey in lastProps) {
     if (
@@ -251,3 +231,9 @@ function diffProperties(lastProps: any, nextProps: any) {
 
   return updatePayload;
 }
+
+ReactLumaReconciler.injectIntoDevTools({
+  bundleType: 1,
+  version: React.version,
+  rendererPackageName: "react-luma",
+});
