@@ -1,29 +1,28 @@
-import * as PIXI from "pixi.js";
-import { createElement } from "./ReactLumaElement";
-import { ReactLumaReconciler } from "./ReactLumaReconciler";
-import { noop } from "./utils/compact";
+import { createContainer, updateContainer } from "./ReactLumaStage";
 import type { ReactNode } from "react";
+import type { CreateContainerOptions } from "./ReactLumaStage";
 
-export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
-  const width = 1080;
-  const height = width * (9 / 16);
+export const ReactLumaRootContainers = new Map();
 
-  const app = new PIXI.Application({
-    width,
-    height,
-    backgroundColor: PIXI.utils.string2hex("#030303"),
-    resolution: window.devicePixelRatio,
-    view: hostContainer,
-  });
+export function render(
+  element: ReactNode,
+  canvasElement: HTMLCanvasElement,
+  options: CreateContainerOptions
+) {
+  let root = ReactLumaRootContainers.get(canvasElement);
 
-  const rootElement = createElement("View");
-  app.stage.addChild(rootElement.displayElement);
+  if (!root) {
+    root = createContainer(canvasElement, options);
+    ReactLumaRootContainers.set(canvasElement, root);
+  }
 
-  const container = ReactLumaReconciler.createContainer(
-    rootElement,
-    false,
-    false
-  );
+  updateContainer(element, root);
+}
 
-  return ReactLumaReconciler.updateContainer(element, container, null, noop);
+export function unmountComponentAtNode(canvasElement: HTMLCanvasElement) {
+  if (ReactLumaRootContainers.has(canvasElement)) {
+    const root = ReactLumaRootContainers.get(canvasElement);
+    ReactLumaRootContainers.delete(root);
+    updateContainer(null, root);
+  }
 }

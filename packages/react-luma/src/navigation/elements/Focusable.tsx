@@ -1,5 +1,5 @@
-import React, { useContext, useRef, useLayoutEffect } from "react";
-import { View } from "../../elements";
+import { useContext, useRef, useLayoutEffect } from "react";
+import { View } from "../../";
 import { FocusSectionContext } from "./FocusSection";
 import { NavProviderContext } from "./NavProvider";
 import type { ReactNode } from "react";
@@ -28,6 +28,8 @@ export function Focusable(props: FocusableProps) {
   }, [sectionId, manager]);
 
   const hasFocus = focusedElement ? ref.current === focusedElement : false;
+
+  const bounds = ref.current?.displayObject.getBounds();
 
   return <View ref={ref}>{props.children(hasFocus)}</View>;
 }

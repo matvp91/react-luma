@@ -1,13 +1,139 @@
+import React from "react";
 import createReconciler from "react-reconciler";
-import performanceNow from "performance-now";
-import invariant from "./utils/invariant";
-import { createElement } from "./ReactLumaElement";
-import { calculateLayout } from "./ReactLumaLayout";
+import { DefaultEventPriority } from "react-reconciler/constants";
+import {
+  createElement,
+  appendChild,
+  insertBefore,
+  removeChild,
+  ReactLumaElement,
+  ReactLumaElementType,
+} from "./ReactLumaElement";
+import {
+  setElementAttribute,
+  setElementStyle,
+  setElementTransform,
+  calculateLayout,
+} from "./ReactLumaLayout";
+import type {
+  ReactLumaElementStyle,
+  ReactLumaElementTransform,
+  ReactLumaOpaqueValue,
+} from "./types";
 
-const NO_CONTEXT = {};
+interface ReactLumaGenericProps {
+  [key: string]: unknown;
+}
 
-export const ReactLumaReconciler = createReconciler({
-  now: performanceNow,
+interface ReactLumaHostContext {}
+
+const NO_CONTEXT: ReactLumaHostContext = {};
+
+const STYLE = "style";
+const CHILDREN = "children";
+const TRANSFORM = "transform";
+
+// TODO: Do not scope this globally, we'll run into trouble when
+// we run multiple instances on the same page (eg: on docs).
+let requiresRecalculateLayout = true;
+
+function getRootElement(element: ReactLumaElement) {
+  let displayObject = element.displayObject;
+  while (displayObject.parent) {
+    displayObject = displayObject.parent;
+    console.log(displayObject);
+  }
+}
+
+function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
+  for (const [key, value] of Object.entries(props)) {
+    if (key === "children") {
+      continue;
+    } else if (key === "style") {
+      requiresRecalculateLayout = true;
+
+      setElementStyle(element, value as ReactLumaElementStyle);
+    } else if (key === "transform") {
+      setElementTransform(element, value as ReactLumaElementTransform);
+    } else {
+      setElementAttribute(element, key, value);
+    }
+  }
+}
+
+export const ReactLumaReconciler = createReconciler<
+  ReactLumaElementType,
+  ReactLumaGenericProps,
+  ReactLumaElement,
+  ReactLumaElement,
+  ReactLumaElement,
+  ReactLumaElement,
+  unknown,
+  unknown,
+  ReactLumaHostContext,
+  ReactLumaGenericProps,
+  unknown,
+  unknown,
+  unknown
+>({
+  isPrimaryRenderer: true,
+  supportsMutation: true,
+  supportsPersistence: false,
+
+  createInstance(type, props) {
+    const element = createElement(type);
+    setProps(element, props);
+    return element;
+  },
+
+  createTextInstance() {
+    throw new Error("createTextInstance is unsupported.");
+  },
+
+  appendInitialChild(parentInstance, child) {
+    requiresRecalculateLayout = true;
+    appendChild(parentInstance, child);
+  },
+
+  appendChild(parentInstance, child) {
+    appendChild(parentInstance, child);
+  },
+
+  removeChild(parentInstance, child) {
+    removeChild(parentInstance, child);
+  },
+
+  finalizeInitialChildren() {
+    return false;
+  },
+
+  appendChildToContainer(container, child) {
+    appendChild(container, child);
+  },
+
+  insertInContainerBefore(container, child, beforeChild) {
+    insertBefore(container, child, beforeChild);
+  },
+
+  removeChildFromContainer(container, child) {
+    removeChild(container, child);
+  },
+
+  clearContainer() {
+    return false;
+  },
+
+  prepareUpdate(instance, type, oldProps, newProps) {
+    return diffProperties(oldProps, newProps);
+  },
+
+  commitUpdate(instance, updatePayload) {
+    setProps(instance, updatePayload);
+  },
+
+  shouldSetTextContent() {
+    return false;
+  },
 
   getRootHostContext() {
     return NO_CONTEXT;
@@ -17,96 +143,118 @@ export const ReactLumaReconciler = createReconciler({
     return NO_CONTEXT;
   },
 
-  getChildHostContextForEventComponent(parentHostContext) {
-    return parentHostContext;
-  },
-
   getPublicInstance(instance) {
     return instance;
   },
 
   prepareForCommit() {
-    // noop
+    return null;
   },
 
-  resetAfterCommit(parent) {
-    calculateLayout(parent);
+  resetAfterCommit(containerInfo) {
+    if (requiresRecalculateLayout) {
+      requiresRecalculateLayout = false;
+      calculateLayout(containerInfo, requiresRecalculateLayout);
+    }
   },
 
-  shouldSetTextContent() {
-    return false;
+  preparePortalMount() {
+    return null;
   },
 
-  createTextInstance(text) {
-    invariant(
-      false,
-      'react-luma: Error trying to add text node "' + text + '"',
-      "If you wish to display some text, use &lt;Text text={string} /&gt; instead."
-    );
+  scheduleTimeout: setTimeout,
+
+  cancelTimeout: clearTimeout,
+
+  noTimeout: -1,
+
+  getCurrentEventPriority() {
+    return DefaultEventPriority;
   },
 
-  createInstance(type, newProps) {
-    const element = createElement(type);
-    element.setProps(newProps);
-    return element;
+  getInstanceFromNode(node) {
+    return node;
   },
 
-  appendInitialChild(parent, child) {
-    parent.appendChild(child);
+  beforeActiveInstanceBlur() {},
+
+  afterActiveInstanceBlur() {},
+
+  prepareScopeUpdate() {},
+
+  getInstanceFromScope() {
+    return null;
   },
 
-  finalizeInitialChildren() {
-    return false;
-  },
+  detachDeletedInstance() {},
 
-  commitMount() {
-    // noop
-  },
+  supportsHydration: false,
+});
 
-  appendChildToContainer(parent, child) {
-    parent.appendChild(child);
-    calculateLayout(parent);
-  },
+function diffProperties(
+  lastProps: ReactLumaOpaqueValue,
+  nextProps: ReactLumaOpaqueValue
+) {
+  let updatePayload: ReactLumaGenericProps | null = null;
 
-  supportsMutation: true,
+  for (let propKey in lastProps) {
+    if (
+      nextProps.hasOwnProperty(propKey) ||
+      !lastProps.hasOwnProperty(propKey) ||
+      lastProps[propKey] == null
+    ) {
+      continue;
+    }
 
-  prepareUpdate() {
-    return true;
-  },
+    if (propKey === CHILDREN) {
+      continue;
+    }
 
-  commitUpdate(instance, updatePayload, type, oldProps, newProps) {
-    instance.setProps(newProps);
-  },
+    if (propKey === STYLE || propKey === TRANSFORM) {
+      if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
+        continue;
+      }
+    }
 
-  commitTextUpdate() {
-    // noop
-  },
+    if (!updatePayload) {
+      updatePayload = {};
+    }
+    updatePayload[propKey] = null;
+  }
 
-  appendChild(parent, child) {
-    parent.appendChild(child);
-  },
+  for (let propKey in nextProps) {
+    const nextProp = nextProps[propKey];
+    const lastProp = lastProps != null ? lastProps[propKey] : undefined;
 
-  insertBefore(instance, child, beforeChild) {
-    instance.insertBefore(child, beforeChild);
-  },
+    if (
+      !nextProps.hasOwnProperty(propKey) ||
+      nextProp === lastProp ||
+      (nextProp == null && lastProp == null)
+    ) {
+      continue;
+    }
 
-  removeChild(instance, child) {
-    instance.removeChild(child);
-  },
+    if (propKey === CHILDREN) {
+      continue;
+    }
 
-  insertInContainerBefore(container, child, beforeChild) {
-    container.insertBefore(child, beforeChild);
-  },
+    if (propKey === STYLE || propKey === TRANSFORM) {
+      if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
+        continue;
+      }
+    }
 
-  removeChildFromContainer(container, child) {
-    container.removeChild(child);
-  },
+    if (!updatePayload) {
+      updatePayload = {};
+    }
+    updatePayload[propKey] = nextProp;
+  }
 
-  resetTextContent() {
-    // noop
-  },
+  return updatePayload;
+}
 
-  shouldDeprioritizeSubtree() {
-    return false;
-  },
+ReactLumaReconciler.injectIntoDevTools({
+  bundleType: 1,
+  version: React.version,
+  rendererPackageName: "react-luma",
 });

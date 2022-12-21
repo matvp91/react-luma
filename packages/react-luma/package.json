@@ -4,7 +4,6 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
-  "type": "module",
   "exports": {
     ".": {
       "import": "./dist/index.js",
@@ -20,13 +19,14 @@
     "dev": "tsup --watch"
   },
   "peerDependencies": {
-    "react": "^16.14.0"
+    "react": "^18.2.0"
   },
   "devDependencies": {
     "@react-luma/tsconfig": "workspace:*",
     "@types/node": "^18.11.15",
     "@types/react": "^18.0.26",
-    "@types/react-reconciler": "0.18.0",
+    "@types/react-reconciler": "0.28.0",
+    "@types/stats.js": "^0.17.0",
     "@types/yoga-layout": "^1.9.4",
     "esbuild": "^0.16.7",
     "tsup": "^6.5.0",
@@ -34,9 +34,11 @@
   },
   "dependencies": {
     "@react-pdf/yoga": "^3.0.0",
-    "performance-now": "^2.1.0",
     "pixi.js": "^7.0.5",
-    "react-reconciler": "0.23.0"
+    "react-reconciler": "0.29.0",
+    "stats.js": "^0.17.0",
+    "ts-custom-error": "^3.3.1",
+    "typed-assert": "^1.0.9"
   },
   "tsup": {
     "entry": [

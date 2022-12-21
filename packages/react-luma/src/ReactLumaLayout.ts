@@ -1,7 +1,17 @@
 import * as PIXI from "pixi.js";
+import yoga from "@react-pdf/yoga";
+import { getElement } from "./ReactLumaElement";
+import * as t from "typed-assert";
+import { ReactLumaCurrentApp } from "./ReactLumaStage";
 import type { ReactLumaElement } from "./ReactLumaElement";
+import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
-export function shortToPosition(style: any, name: string) {
+function extractShortHandToPosition(
+  style: {
+    [key: string]: string | number;
+  },
+  name: string
+) {
   return {
     left: style[`${name}Left`] || style[name] || 0,
     right: style[`${name}Right`] || style[name] || 0,
@@ -10,33 +20,151 @@ export function shortToPosition(style: any, name: string) {
   };
 }
 
-function appendStyle(
-  displayElement: ReactLumaElement["displayElement"],
-  layoutNode: ReactLumaElement["layoutNode"]
-) {
-  const layout = layoutNode.getComputedLayout();
+function appendStyle(element: ReactLumaElement) {
+  const layout = element.yogaNode.getComputedLayout();
 
-  displayElement.position.x = layout.left;
-  displayElement.position.y = layout.top;
+  element.displayObject.position.x = layout.left;
+  element.displayObject.position.y = layout.top;
 
-  // TODO: This is a very messy check. Make it explicit.
-  if (
-    displayElement instanceof PIXI.Sprite &&
-    !(displayElement instanceof PIXI.Text)
-  ) {
-    displayElement.width = layout.width;
-    displayElement.height = layout.height;
+  if (element.type == "Sprite") {
+    element.displayObject.width = layout.width;
+    element.displayObject.height = layout.height;
   }
 
-  for (let i = 0; i < displayElement.children.length; i++) {
-    const childDisplayElement = displayElement.children[i];
-    const childLayoutNode = layoutNode.getChild(i);
-    appendStyle(childDisplayElement as PIXI.Container, childLayoutNode);
+  const childrenCount = element.displayObject.children.length;
+
+  for (let i = 0; i < childrenCount; i++) {
+    const child = getElement(element.displayObject.children[i]);
+    appendStyle(child);
   }
 }
 
 export function calculateLayout(element: ReactLumaElement) {
-  element.layoutNode.calculateLayout();
+  if (!ReactLumaCurrentApp.current) {
+    throw new Error(
+      "Cannot calculate layout, ReactLumaCurrentApp is undefined"
+    );
+  }
 
-  appendStyle(element.displayElement, element.layoutNode);
+  const { screen } = ReactLumaCurrentApp.current;
+
+  element.yogaNode.calculateLayout(screen.width, screen.height);
+  appendStyle(element);
+}
+
+export function setElementStyle(
+  element: ReactLumaElement,
+  style: ReactLumaElementStyle
+) {
+  element.yogaNode.setDisplay(yoga.DISPLAY_FLEX);
+
+  if (style.flexDirection === "row") {
+    element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_ROW);
+  } else if (style.flexDirection === "column") {
+    element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_COLUMN);
+  }
+
+  if (style.alignItems === "center") {
+    element.yogaNode.setAlignItems(yoga.ALIGN_CENTER);
+  }
+  if (style.justifyContent === "center") {
+    element.yogaNode.setJustifyContent(yoga.JUSTIFY_CENTER);
+  }
+
+  if (style.width !== undefined) {
+    element.yogaNode.setWidth(style.width);
+  }
+  if (style.height !== undefined) {
+    element.yogaNode.setHeight(style.height);
+  }
+
+  const padding = extractShortHandToPosition(style, "padding");
+  if (padding.left !== undefined) {
+    element.yogaNode.setPadding(yoga.EDGE_LEFT, padding.left);
+  }
+  if (padding.right !== undefined) {
+    element.yogaNode.setPadding(yoga.EDGE_RIGHT, padding.right);
+  }
+  if (padding.top !== undefined) {
+    element.yogaNode.setPadding(yoga.EDGE_TOP, padding.top);
+  }
+  if (padding.bottom !== undefined) {
+    element.yogaNode.setPadding(yoga.EDGE_BOTTOM, padding.bottom);
+  }
+
+  const margin = extractShortHandToPosition(style, "margin");
+  if (margin.left) {
+    element.yogaNode.setMargin(yoga.EDGE_LEFT, margin.left);
+  }
+  if (margin.right) {
+    element.yogaNode.setMargin(yoga.EDGE_RIGHT, margin.right);
+  }
+  if (margin.top) {
+    element.yogaNode.setMargin(yoga.EDGE_TOP, margin.top);
+  }
+  if (margin.bottom) {
+    element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
+  }
+}
+
+export function setElementTransform(
+  element: ReactLumaElement,
+  transform: ReactLumaElementTransform
+) {
+  if (!transform) {
+    return;
+  }
+
+  if (transform.left !== undefined) {
+    element.displayObject.position.x = transform.left;
+  }
+
+  if (transform.top !== undefined) {
+    element.displayObject.position.y = transform.top;
+  }
+}
+
+export function setElementAttribute(
+  element: ReactLumaElement,
+  key: string,
+  value: unknown
+) {
+  if (element.type === "Text") {
+    if (key === "text" && value !== undefined) {
+      t.isString(value, `Text ${key}=${value} is not a string.`);
+      element.displayObject.text = value;
+
+      const localBounds = element.displayObject.getLocalBounds();
+      element.yogaNode.setWidth(localBounds.width);
+      element.yogaNode.setHeight(localBounds.height);
+    }
+    if (key === "fill" && value !== undefined) {
+      t.isString(value, `Text ${key}=${value} is not a string.`);
+      element.displayObject.style.fill = PIXI.utils.string2hex(value);
+    }
+  }
+
+  if (element.type === "Sprite") {
+    if (key === "texture" && value !== undefined) {
+      t.isInstanceOf(value, PIXI.Texture, `Sprite ${key} is not a texture.`);
+
+      element.displayObject.texture = value;
+
+      const layout = ensureYogaNodeLayout(element.yogaNode);
+      element.displayObject.width = layout.width;
+      element.displayObject.height = layout.height;
+    }
+
+    if (key === "tint" && value !== undefined) {
+      t.isString(value, `Sprite ${key}=${value} is not a string.`);
+      element.displayObject.tint = PIXI.utils.string2hex(value);
+    }
+  }
+}
+
+function ensureYogaNodeLayout(yogaNode: yoga.YogaNode) {
+  if (yogaNode.isDirty()) {
+    yogaNode.calculateLayout();
+  }
+  return yogaNode.getComputedLayout();
 }
