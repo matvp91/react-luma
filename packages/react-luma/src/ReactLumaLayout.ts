@@ -2,6 +2,7 @@ import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { getElement } from "./ReactLumaElement";
 import * as t from "typed-assert";
+import { ReactLumaCurrentApp } from "./ReactLumaStage";
 import type { ReactLumaElement } from "./ReactLumaElement";
 import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
@@ -39,7 +40,15 @@ function appendStyle(element: ReactLumaElement) {
 }
 
 export function calculateLayout(element: ReactLumaElement) {
-  element.yogaNode.calculateLayout();
+  if (!ReactLumaCurrentApp.current) {
+    throw new Error(
+      "Cannot calculate layout, ReactLumaCurrentApp is undefined"
+    );
+  }
+
+  const { screen } = ReactLumaCurrentApp.current;
+
+  element.yogaNode.calculateLayout(screen.width, screen.height);
   appendStyle(element);
 }
 
@@ -62,24 +71,24 @@ export function setElementStyle(
     element.yogaNode.setJustifyContent(yoga.JUSTIFY_CENTER);
   }
 
-  if (style.width) {
+  if (style.width !== undefined) {
     element.yogaNode.setWidth(style.width);
   }
-  if (style.height) {
+  if (style.height !== undefined) {
     element.yogaNode.setHeight(style.height);
   }
 
   const padding = extractShortHandToPosition(style, "padding");
-  if (padding.left) {
+  if (padding.left !== undefined) {
     element.yogaNode.setPadding(yoga.EDGE_LEFT, padding.left);
   }
-  if (padding.right) {
+  if (padding.right !== undefined) {
     element.yogaNode.setPadding(yoga.EDGE_RIGHT, padding.right);
   }
-  if (padding.top) {
+  if (padding.top !== undefined) {
     element.yogaNode.setPadding(yoga.EDGE_TOP, padding.top);
   }
-  if (padding.bottom) {
+  if (padding.bottom !== undefined) {
     element.yogaNode.setPadding(yoga.EDGE_BOTTOM, padding.bottom);
   }
 

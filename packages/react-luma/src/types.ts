@@ -22,18 +22,18 @@ export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
   alignItems?: "center";
   justifyContent?: "center";
-  padding?: number;
-  paddingLeft?: number;
-  paddingRight?: number;
-  paddingTop?: number;
-  paddingBottom?: number;
-  margin?: number;
-  marginLeft?: number;
-  marginRight?: number;
-  marginTop?: number;
-  marginBottom?: number;
-  width?: number;
-  height?: number;
+  padding?: number | string;
+  paddingLeft?: number | string;
+  paddingRight?: number | string;
+  paddingTop?: number | string;
+  paddingBottom?: number | string;
+  margin?: number | string;
+  marginLeft?: number | string;
+  marginRight?: number | string;
+  marginTop?: number | string;
+  marginBottom?: number | string;
+  width?: number | string;
+  height?: number | string;
 };
 
 export type ReactLumaElementTransform = {

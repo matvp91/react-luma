@@ -15,7 +15,11 @@ import {
   setElementTransform,
   calculateLayout,
 } from "./ReactLumaLayout";
-import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
+import type {
+  ReactLumaElementStyle,
+  ReactLumaElementTransform,
+  ReactLumaOpaqueValue,
+} from "./types";
 
 interface ReactLumaGenericProps {
   [key: string]: unknown;
@@ -29,7 +33,17 @@ const STYLE = "style";
 const CHILDREN = "children";
 const TRANSFORM = "transform";
 
+// TODO: Do not scope this globally, we'll run into trouble when
+// we run multiple instances on the same page (eg: on docs).
 let requiresRecalculateLayout = true;
+
+function getRootElement(element: ReactLumaElement) {
+  let displayObject = element.displayObject;
+  while (displayObject.parent) {
+    displayObject = displayObject.parent;
+    console.log(displayObject);
+  }
+}
 
 function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
   for (const [key, value] of Object.entries(props)) {
@@ -140,7 +154,7 @@ export const ReactLumaReconciler = createReconciler<
   resetAfterCommit(containerInfo) {
     if (requiresRecalculateLayout) {
       requiresRecalculateLayout = false;
-      calculateLayout(containerInfo);
+      calculateLayout(containerInfo, requiresRecalculateLayout);
     }
   },
 
@@ -177,7 +191,10 @@ export const ReactLumaReconciler = createReconciler<
   supportsHydration: false,
 });
 
-function diffProperties(lastProps: any, nextProps: any) {
+function diffProperties(
+  lastProps: ReactLumaOpaqueValue,
+  nextProps: ReactLumaOpaqueValue
+) {
   let updatePayload: ReactLumaGenericProps | null = null;
 
   for (let propKey in lastProps) {

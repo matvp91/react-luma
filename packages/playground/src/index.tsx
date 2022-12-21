@@ -112,7 +112,7 @@ function Swimlanes() {
       lane.displayObject.getGlobalPosition().y;
 
     // TODO: We should not count transform as position.
-    setTop(delta + 212);
+    setTop(delta + 12);
   }, [nav.focusedElement]);
 
   return (
@@ -198,7 +198,6 @@ function App() {
           </FocusSection>
         </View>
         <View style={{ flexDirection: "column" }}>
-          <View style={{ height: 200 }} />
           <Swimlanes />
         </View>
       </View>
@@ -206,10 +205,19 @@ function App() {
   );
 }
 
+function TestApp() {
+  return (
+    <Sprite
+      style={{ width: "100%", height: "100%" }}
+      texture={TEXTURE_WHITE}
+      tint="#ff00ff"
+    />
+  );
+}
+
 const container = document.getElementById("root");
 if (container instanceof HTMLCanvasElement) {
   render(<App />, container, {
     width: 1080,
-    backgroundColor: "#f1f1f1",
   });
 }

@@ -12,6 +12,7 @@ const LumaElementInternalKey = "__lumaElement";
 
 export type ReactLumaElement = {
   yogaNode: yoga.YogaNode;
+  calculateLayout: boolean;
 } & (
   | {
       type: "View";
@@ -52,6 +53,7 @@ export function createElement(type: ReactLumaElementType): ReactLumaElement {
     type,
     displayObject,
     yogaNode: yoga.Node.create(),
+    calculateLayout: false,
   };
 
   displayObject[LumaElementInternalKey] = lumaElement;

@@ -2,7 +2,7 @@ import * as PIXI from "pixi.js";
 
 export * from "./types";
 
-export { render } from "./ReactLumaRender";
+export { render, unmountComponentAtNode } from "./ReactLumaRender";
 
 export type { ReactLumaElement } from "./ReactLumaElement";
 

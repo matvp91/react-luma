@@ -1,38 +1,52 @@
 import * as PIXI from "pixi.js";
 import { createElement } from "./ReactLumaElement";
+import { setElementStyle } from "./ReactLumaLayout";
 import { ReactLumaReconciler } from "./ReactLumaReconciler";
 import type { ReactNode } from "react";
 import type { OpaqueRoot } from "react-reconciler";
 
-const ReactLumaStageContext: {
-  app: PIXI.Application<PIXI.ICanvas> | null;
-} = {
-  app: null,
-};
-
 function noop() {}
 
+// TODO: This will not work if we have multiple renderers,
+// such as in docs.
+export const ReactLumaCurrentApp: {
+  current: PIXI.Application<PIXI.ICanvas> | null;
+} = {
+  current: null,
+};
+
 export type CreateContainerOptions = {
-  width: number;
-  backgroundColor: string;
+  width?: number;
 };
 
 export function createContainer(
   canvasElement: HTMLCanvasElement,
-  options: CreateContainerOptions
+  containerOptions: CreateContainerOptions
 ) {
+  const options = {
+    width: 1080,
+    ...containerOptions,
+  };
+
   const height = options.width * (9 / 16);
 
   const app = new PIXI.Application({
     width: options.width,
     height,
-    backgroundColor: PIXI.utils.string2hex(options.backgroundColor),
     resolution: window.devicePixelRatio,
     view: canvasElement,
+    // The canvas always has a transparent background, we can then
+    // rely on DOM elements such as video, to render underneath and have
+    // player controls built by Luma.
+    backgroundAlpha: 0,
   });
-  ReactLumaStageContext.app = app;
+  ReactLumaCurrentApp.current = app;
 
   const rootElement = createElement("View");
+  setElementStyle(rootElement, {
+    width: "100%",
+    height: "100%",
+  });
   app.stage.addChild(rootElement.displayObject);
 
   return ReactLumaReconciler.createContainer(
@@ -49,8 +63,4 @@ export function createContainer(
 
 export function updateContainer(element: ReactNode, container: OpaqueRoot) {
   ReactLumaReconciler.updateContainer(element, container, null, noop);
-}
-
-export function getStageContext() {
-  return ReactLumaStageContext.app;
 }

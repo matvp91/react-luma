@@ -4,8 +4,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "React Luma",
-  tagline:
-    "A comprehensive, yet simple, React renderer to build WebGL interfaces for TV's, set-top boxes or other low memory devices.",
+  tagline: "A WebGL renderer for user interfaces with React",
   url: "https://react-luma.com",
   baseUrl: "/",
   onBrokenLinks: "throw",
