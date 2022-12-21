@@ -1,6 +1,6 @@
 {
   "name": "react-luma",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "license": "MIT",
@@ -41,6 +41,7 @@
     "typed-assert": "^1.0.9"
   },
   "tsup": {
+    "globalName": "ReactLuma",
     "entry": [
       "src/index.ts",
       "src/navigation/index.ts"
