@@ -40,9 +40,23 @@ export default function Home(): JSX.Element {
         <div className={cx("container", styles.container)}>
           <p>
             Build your scene declaratively with re-usable, self-contained
-            components and render them in a WebGL canvas.
+            components and render them in a WebGL canvas. The renderer is mainly
+            focused on TV's, set-top boxes and a variety of other low memory
+            devices.
           </p>
+          <h3>Installation</h3>
           <CodeBlock>npm install react-luma</CodeBlock>
+          <p>
+            React Luma's API is very familiar to anyone who has worked with
+            React DOM. The main difference is that you can no longer rely on DOM
+            elements such as a div or span, but you'd be building your UI
+            composition with the built-in base components.
+          </p>
+          <h3>Playground</h3>
+          <p>
+            Feel free to make changes to the code below and the compiler will
+            render an immediate result.
+          </p>
           <Playground />
         </div>
       </main>

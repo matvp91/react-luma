@@ -59,6 +59,7 @@ const config = {
         ],
       },
       footer: {
+        style: "light",
         links: [
           {
             title: "Docs",
