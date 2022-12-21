@@ -5,7 +5,12 @@ import * as t from "typed-assert";
 import type { ReactLumaElement } from "./ReactLumaElement";
 import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
-function extractShortHandToPosition(style: any, name: string) {
+function extractShortHandToPosition(
+  style: {
+    [key: string]: string | number;
+  },
+  name: string
+) {
   return {
     left: style[`${name}Left`] || style[name] || 0,
     right: style[`${name}Right`] || style[name] || 0,
@@ -14,7 +19,7 @@ function extractShortHandToPosition(style: any, name: string) {
   };
 }
 
-function appendStyle(element: ReactLumaElement, depth: number) {
+function appendStyle(element: ReactLumaElement) {
   const layout = element.yogaNode.getComputedLayout();
 
   element.displayObject.position.x = layout.left;
@@ -29,16 +34,13 @@ function appendStyle(element: ReactLumaElement, depth: number) {
 
   for (let i = 0; i < childrenCount; i++) {
     const child = getElement(element.displayObject.children[i]);
-    appendStyle(child, depth + 1);
+    appendStyle(child);
   }
 }
 
 export function calculateLayout(element: ReactLumaElement) {
-  if ((window as any).DISABLE) {
-    return;
-  }
   element.yogaNode.calculateLayout();
-  appendStyle(element, 0);
+  appendStyle(element);
 }
 
 export function setElementStyle(
