@@ -1,93 +1,71 @@
 import createReconciler from "react-reconciler";
-import performanceNow from "performance-now";
+import { DefaultEventPriority } from "react-reconciler/constants";
 import {
   createElement,
   appendChild,
   insertBefore,
   removeChild,
+  ReactLumaElement,
+  ReactLumaElementType,
 } from "./ReactLumaElement";
 import { setElementProps, calculateLayout } from "./ReactLumaLayout";
 
-const NO_CONTEXT = {};
+interface ReactLumaGenericProps {
+  [key: string]: unknown;
+}
 
-export const ReactLumaReconciler = createReconciler({
-  now: performanceNow,
+interface ReactLumaHostContext {}
 
-  getRootHostContext() {
-    return NO_CONTEXT;
-  },
+const NO_CONTEXT: ReactLumaHostContext = {};
 
-  getChildHostContext() {
-    return NO_CONTEXT;
-  },
+export const ReactLumaReconciler = createReconciler<
+  ReactLumaElementType,
+  ReactLumaGenericProps,
+  ReactLumaElement,
+  ReactLumaElement,
+  ReactLumaElement,
+  ReactLumaElement,
+  unknown,
+  unknown,
+  ReactLumaHostContext,
+  ReactLumaGenericProps,
+  unknown,
+  unknown,
+  unknown
+>({
+  isPrimaryRenderer: true,
+  supportsMutation: true,
+  supportsPersistence: false,
 
-  getPublicInstance(instance) {
-    return instance;
-  },
-
-  prepareForCommit() {
-    // noop
-  },
-
-  resetAfterCommit(parent) {
-    calculateLayout(parent);
-  },
-
-  shouldSetTextContent() {
-    return false;
-  },
-
-  createTextInstance(text) {
-    throw new Error("createTextInstance is unsupported.");
-  },
-
-  createInstance(type, newProps) {
+  createInstance(type, props, rootContainer, hostContext, internalHandle) {
     const element = createElement(type);
-    setElementProps(element, newProps);
+    setElementProps(element, props);
     return element;
   },
 
-  appendInitialChild(parent, child) {
-    appendChild(parent, child);
+  createTextInstance(text, rootContainer, hostContext, internalHandle) {
+    throw new Error("createTextInstance is unsupported.");
   },
 
-  finalizeInitialChildren() {
+  appendInitialChild(parentInstance, child) {
+    appendChild(parentInstance, child);
+  },
+
+  appendChild(parentInstance, child) {
+    appendChild(parentInstance, child);
+  },
+
+  removeChild(parentInstance, child) {
+    removeChild(parentInstance, child);
+  },
+
+  finalizeInitialChildren(instance, type, props, rootContainer, hostContext) {
     return false;
   },
 
-  commitMount() {
-    // noop
-  },
-
-  appendChildToContainer(parent, child) {
-    appendChild(parent, child);
-    calculateLayout(parent);
-  },
-
-  supportsMutation: true,
-
-  prepareUpdate() {
-    return true;
-  },
-
-  commitUpdate(instance, updatePayload, type, oldProps, newProps) {
-    setElementProps(instance, newProps);
-  },
-
-  commitTextUpdate() {
-    // noop
-  },
-
-  appendChild(parent, child) {
-    appendChild(parent, child);
-  },
-
-  insertBefore(instance, child, beforeChild) {
-    insertBefore(instance, child, beforeChild);
-  },
-
-  removeChild(instance, child) {
-    removeChild(instance, child);
+  appendChildToContainer(container, child) {
+    appendChild(container, child);
+    calculateLayout(container);
   },
 
   insertInContainerBefore(container, child, beforeChild) {
@@ -98,27 +76,85 @@ export const ReactLumaReconciler = createReconciler({
     removeChild(container, child);
   },
 
-  resetTextContent() {
-    // noop
-  },
-
-  shouldDeprioritizeSubtree() {
+  clearContainer(container) {
     return false;
   },
 
-  scheduleDeferredCallback() {},
+  prepareUpdate(
+    instance,
+    type,
+    oldProps,
+    newProps,
+    rootContainer,
+    hostContext
+  ) {
+    return {};
+  },
 
-  cancelDeferredCallback() {},
+  commitUpdate(
+    instance,
+    updatePayload,
+    type,
+    prevProps,
+    nextProps,
+    internalHandle
+  ) {
+    setElementProps(instance, nextProps);
+  },
 
-  setTimeout() {},
+  shouldSetTextContent(type, props) {
+    return false;
+  },
 
-  clearTimeout() {},
+  getRootHostContext(rootContainer) {
+    return NO_CONTEXT;
+  },
 
-  noTimeout: undefined,
+  getChildHostContext(parentHostContext, type, rootContainer) {
+    return NO_CONTEXT;
+  },
 
-  isPrimaryRenderer: true,
+  getPublicInstance(instance) {
+    return instance;
+  },
 
-  supportsPersistence: false,
+  prepareForCommit(containerInfo) {
+    return null;
+  },
+
+  resetAfterCommit(containerInfo) {
+    calculateLayout(containerInfo);
+  },
+
+  preparePortalMount(containerInfo) {
+    return null;
+  },
+
+  scheduleTimeout: setTimeout,
+
+  cancelTimeout: clearTimeout,
+
+  noTimeout: -1,
+
+  getCurrentEventPriority() {
+    return DefaultEventPriority;
+  },
+
+  getInstanceFromNode(node) {
+    return node;
+  },
+
+  beforeActiveInstanceBlur() {},
+
+  afterActiveInstanceBlur() {},
+
+  prepareScopeUpdate() {},
+
+  getInstanceFromScope() {
+    return null;
+  },
+
+  detachDeletedInstance() {},
 
   supportsHydration: false,
 });

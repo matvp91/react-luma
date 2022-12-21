@@ -6,3 +6,13 @@ export {
   ReactLumaSprite as Sprite,
   ReactLumaImage as Image,
 } from "./elements";
+
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      View: {
+        test: string;
+      };
+    }
+  }
+}
