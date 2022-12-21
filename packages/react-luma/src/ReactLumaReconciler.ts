@@ -8,7 +8,12 @@ import {
   ReactLumaElement,
   ReactLumaElementType,
 } from "./ReactLumaElement";
-import { setElementProps, calculateLayout } from "./ReactLumaLayout";
+import {
+  setElementAttribute,
+  setElementStyle,
+  setElementTransform,
+  calculateLayout,
+} from "./ReactLumaLayout";
 
 interface ReactLumaGenericProps {
   [key: string]: unknown;
@@ -17,6 +22,8 @@ interface ReactLumaGenericProps {
 interface ReactLumaHostContext {}
 
 const NO_CONTEXT: ReactLumaHostContext = {};
+
+let recalcLayout = false;
 
 export const ReactLumaReconciler = createReconciler<
   ReactLumaElementType,
@@ -39,7 +46,19 @@ export const ReactLumaReconciler = createReconciler<
 
   createInstance(type, props, rootContainer, hostContext, internalHandle) {
     const element = createElement(type);
-    setElementProps(element, props);
+
+    for (const [key, value] of Object.entries(props)) {
+      if (key === "children") {
+        continue;
+      } else if (key === "style") {
+        setElementStyle(element, value);
+      } else if (key === "transform") {
+        setElementTransform(element, value);
+      } else {
+        setElementAttribute(element, key, value);
+      }
+    }
+
     return element;
   },
 
@@ -48,6 +67,7 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendInitialChild(parentInstance, child) {
+    recalcLayout = true;
     appendChild(parentInstance, child);
   },
 
@@ -65,7 +85,6 @@ export const ReactLumaReconciler = createReconciler<
 
   appendChildToContainer(container, child) {
     appendChild(container, child);
-    calculateLayout(container);
   },
 
   insertInContainerBefore(container, child, beforeChild) {
@@ -88,7 +107,7 @@ export const ReactLumaReconciler = createReconciler<
     rootContainer,
     hostContext
   ) {
-    return {};
+    return diffProperties(oldProps, newProps);
   },
 
   commitUpdate(
@@ -99,7 +118,18 @@ export const ReactLumaReconciler = createReconciler<
     nextProps,
     internalHandle
   ) {
-    setElementProps(instance, nextProps);
+    for (const [key, value] of Object.entries(updatePayload)) {
+      if (key === "children") {
+        continue;
+      } else if (key === "style") {
+        recalcLayout = true;
+        setElementStyle(instance, value);
+      } else if (key === "transform") {
+        setElementTransform(instance, value);
+      } else {
+        setElementAttribute(instance, key, value);
+      }
+    }
   },
 
   shouldSetTextContent(type, props) {
@@ -123,7 +153,11 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   resetAfterCommit(containerInfo) {
-    calculateLayout(containerInfo);
+    if (recalcLayout) {
+      console.log("calculate");
+      recalcLayout = false;
+      calculateLayout(containerInfo);
+    }
   },
 
   preparePortalMount(containerInfo) {
@@ -158,3 +192,62 @@ export const ReactLumaReconciler = createReconciler<
 
   supportsHydration: false,
 });
+
+function diffProperties(lastProps: any, nextProps: any) {
+  let updatePayload = null;
+
+  for (let propKey in lastProps) {
+    if (
+      nextProps.hasOwnProperty(propKey) ||
+      !lastProps.hasOwnProperty(propKey) ||
+      lastProps[propKey] == null
+    ) {
+      continue;
+    }
+
+    if (propKey === "children") {
+      continue;
+    }
+
+    if (propKey === "style" || propKey === "transform") {
+      if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
+        continue;
+      }
+    }
+
+    if (!updatePayload) {
+      updatePayload = {};
+    }
+    updatePayload[propKey] = null;
+  }
+
+  for (let propKey in nextProps) {
+    const nextProp = nextProps[propKey];
+    const lastProp = lastProps != null ? lastProps[propKey] : undefined;
+
+    if (
+      !nextProps.hasOwnProperty(propKey) ||
+      nextProp === lastProp ||
+      (nextProp == null && lastProp == null)
+    ) {
+      continue;
+    }
+
+    if (propKey === "children") {
+      continue;
+    }
+
+    if (propKey === "style" || propKey === "transform") {
+      if (!diffProperties(lastProps[propKey], nextProps[propKey])) {
+        continue;
+      }
+    }
+
+    if (!updatePayload) {
+      updatePayload = {};
+    }
+    updatePayload[propKey] = nextProp;
+  }
+
+  return updatePayload;
+}

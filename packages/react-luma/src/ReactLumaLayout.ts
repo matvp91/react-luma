@@ -2,11 +2,7 @@ import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
 import { getElement } from "./ReactLumaElement";
 import type { ReactLumaElement } from "./ReactLumaElement";
-import type {
-  ReactLumaElementCommonProps,
-  ReactLumaElementSpriteProps,
-  ReactLumaElementTextProps,
-} from "./types";
+import type { ReactLumaElementCommonProps } from "./types";
 
 function extractShortHandToPosition(style: any, name: string) {
   return {
@@ -37,97 +33,118 @@ function appendStyle(element: ReactLumaElement, depth: number) {
 }
 
 export function calculateLayout(element: ReactLumaElement) {
+  if ((window as any).DISABLE) {
+    return;
+  }
   element.yogaNode.calculateLayout();
   appendStyle(element, 0);
 }
 
-function setTextProps(
-  element: Extract<ReactLumaElement, { type: "Text" }>,
-  props: ReactLumaElementTextProps
-) {
-  element.displayObject.text = props.text;
-
-  const localBounds = element.displayObject.getLocalBounds();
-  element.yogaNode.setWidth(localBounds.width);
-  element.yogaNode.setHeight(localBounds.height);
-
-  if (props.fill) {
-    element.displayObject.style.fill = PIXI.utils.string2hex(props.fill);
-  }
-}
-
-function setSpriteProps(
-  element: Extract<ReactLumaElement, { type: "Sprite" }>,
-  props: ReactLumaElementSpriteProps
-) {
-  if (props.texture) {
-    element.displayObject.texture = props.texture;
-  }
-  if (props.tint) {
-    element.displayObject.tint = PIXI.utils.string2hex(props.tint);
-  }
-}
-
-export function setElementProps(
+export function setElementStyle(
   element: ReactLumaElement,
-  props: ReactLumaElementCommonProps
+  style: ReactLumaElementCommonProps["style"]
+) {
+  if (!style) {
+    return;
+  }
+
+  element.yogaNode.setDisplay(yoga.DISPLAY_FLEX);
+
+  if (style.flexDirection === "row") {
+    element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_ROW);
+  } else if (style.flexDirection === "column") {
+    element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_COLUMN);
+  }
+
+  if (style.alignItems === "center") {
+    element.yogaNode.setAlignItems(yoga.ALIGN_CENTER);
+  }
+  if (style.justifyContent === "center") {
+    element.yogaNode.setJustifyContent(yoga.JUSTIFY_CENTER);
+  }
+
+  if (style.width) {
+    element.yogaNode.setWidth(style.width);
+  }
+  if (style.height) {
+    element.yogaNode.setHeight(style.height);
+  }
+
+  const padding = extractShortHandToPosition(style, "padding");
+  if (padding.left) {
+    element.yogaNode.setPadding(yoga.EDGE_LEFT, padding.left);
+  }
+  if (padding.right) {
+    element.yogaNode.setPadding(yoga.EDGE_RIGHT, padding.right);
+  }
+  if (padding.top) {
+    element.yogaNode.setPadding(yoga.EDGE_TOP, padding.top);
+  }
+  if (padding.bottom) {
+    element.yogaNode.setPadding(yoga.EDGE_BOTTOM, padding.bottom);
+  }
+
+  const margin = extractShortHandToPosition(style, "margin");
+  if (margin.left) {
+    element.yogaNode.setMargin(yoga.EDGE_LEFT, margin.left);
+  }
+  if (margin.right) {
+    element.yogaNode.setMargin(yoga.EDGE_RIGHT, margin.right);
+  }
+  if (margin.top) {
+    element.yogaNode.setMargin(yoga.EDGE_TOP, margin.top);
+  }
+  if (margin.bottom) {
+    element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
+  }
+}
+
+export function setElementTransform(
+  element: ReactLumaElement,
+  transform: ReactLumaElementCommonProps["transform"]
+) {
+  if (!transform) {
+    return;
+  }
+
+  if (transform.left !== undefined) {
+    element.displayObject.position.x = transform.left;
+  }
+}
+
+export function setElementAttribute(
+  element: ReactLumaElement,
+  key: string,
+  value: unknown
 ) {
   if (element.type === "Text") {
-    setTextProps(element, props as ReactLumaElementTextProps);
+    if (key === "text") {
+      element.displayObject.text = value;
+
+      // Set the new bounds for the new text.
+      // TODO: setElementStyle instead of accessing yogaNode here.
+      const localBounds = element.displayObject.getLocalBounds();
+      element.yogaNode.setWidth(localBounds.width);
+      element.yogaNode.setHeight(localBounds.height);
+    }
+    if (key === "fill" && value) {
+      element.displayObject.style.fill = PIXI.utils.string2hex(value);
+    }
   }
 
   if (element.type === "Sprite") {
-    setSpriteProps(element, props as ReactLumaElementSpriteProps);
-  }
-
-  if (props.style) {
-    element.yogaNode.setDisplay(yoga.DISPLAY_FLEX);
-
-    if (props.style.flexDirection === "row") {
-      element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_ROW);
-    } else if (props.style.flexDirection === "column") {
-      element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_COLUMN);
+    if (key === "texture" && value) {
+      element.displayObject.texture = value;
+      if (element.yogaNode.isDirty()) {
+        element.yogaNode.calculateLayout();
+      }
+      const layout = element.yogaNode.getComputedLayout();
+      element.displayObject.width = layout.width;
+      element.displayObject.height = layout.height;
     }
 
-    if (props.style.width) {
-      element.yogaNode.setWidth(props.style.width);
-    }
-    if (props.style.height) {
-      element.yogaNode.setHeight(props.style.height);
-    }
-
-    const padding = extractShortHandToPosition(props.style, "padding");
-    if (padding.left) {
-      element.yogaNode.setPadding(yoga.EDGE_LEFT, padding.left);
-    }
-    if (padding.right) {
-      element.yogaNode.setPadding(yoga.EDGE_RIGHT, padding.right);
-    }
-    if (padding.top) {
-      element.yogaNode.setPadding(yoga.EDGE_TOP, padding.top);
-    }
-    if (padding.bottom) {
-      element.yogaNode.setPadding(yoga.EDGE_BOTTOM, padding.bottom);
-    }
-
-    const margin = extractShortHandToPosition(props.style, "margin");
-    if (margin.left) {
-      element.yogaNode.setMargin(yoga.EDGE_LEFT, margin.left);
-    }
-    if (margin.right) {
-      element.yogaNode.setMargin(yoga.EDGE_RIGHT, margin.right);
-    }
-    if (margin.top) {
-      element.yogaNode.setMargin(yoga.EDGE_TOP, margin.top);
-    }
-    if (margin.bottom) {
-      element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
-    }
-  }
-
-  if (props.transform) {
-    if (props.transform.left !== undefined) {
-      element.displayObject.position.x = props.transform.left;
+    if (key === "tint" && value) {
+      element.displayObject.tint = PIXI.utils.string2hex(value);
     }
   }
 }

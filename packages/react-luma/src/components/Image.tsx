@@ -15,5 +15,9 @@ export default forwardRef<ReactLumaElement, ImageProps>((props, ref) => {
     PIXI.Texture.fromURL(props.src).then(setTexture);
   }, [props.src]);
 
+  if (!texture) {
+    return null;
+  }
+
   return <Sprite {...props} texture={texture} ref={ref} />;
 });

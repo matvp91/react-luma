@@ -32,6 +32,7 @@ function Swimlane(props: SwimlaneProps) {
         `https://api.themoviedb.org/3${props.tmdbPath}?api_key=${TMDB_API_KEY}`
       );
       const data = await response.json();
+      await new Promise((resolve) => setTimeout(resolve, 2000));
       setItems(data.results);
     };
     fetchData();
@@ -42,12 +43,15 @@ function Swimlane(props: SwimlaneProps) {
   const [left, setLeft] = useState(0);
   useEffect(() => {
     if (nav.focusedElement && containerRef.current) {
-      const delta =
-        containerRef.current.displayObject.getBounds().left -
-        nav.focusedElement.displayObject.getBounds().left;
-      setLeft(delta);
+      const sectionId = nav.manager.getSectionId(nav.focusedElement);
+      if (sectionId === props.id) {
+        const delta =
+          containerRef.current.displayObject.getBounds().left -
+          nav.focusedElement.displayObject.getBounds().left;
+        setLeft(delta);
+      }
     }
-  }, [nav.focusedElement]);
+  }, [props.id, nav.focusedElement]);
 
   return (
     <View style={{ marginBottom: 12 }}>
@@ -62,7 +66,12 @@ function Swimlane(props: SwimlaneProps) {
             <Focusable key={item.id}>
               {(hasFocus) => (
                 <Sprite
-                  style={{ padding: 6 }}
+                  style={{
+                    width: 110,
+                    height: 160,
+                    alignItems: "center",
+                    justifyContent: "center",
+                  }}
                   tint={hasFocus ? "#ff0000" : "#ffffff"}
                   texture={TEXTURE_WHITE}
                 >

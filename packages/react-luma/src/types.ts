@@ -20,6 +20,8 @@ export type ReactLumaElementCommonProps = PickCommon<
 
 export type ReactLumaElementStyle = {
   flexDirection?: "row" | "column";
+  alignItems?: "center";
+  justifyContent?: "center";
   padding?: number;
   paddingLeft?: number;
   paddingRight?: number;
