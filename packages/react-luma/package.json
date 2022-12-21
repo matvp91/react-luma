@@ -41,15 +41,13 @@
     "typed-assert": "^1.0.9"
   },
   "tsup": {
-    "globalName": "ReactLuma",
     "entry": [
       "src/index.ts",
       "src/navigation/index.ts"
     ],
     "format": [
       "esm",
-      "cjs",
-      "iife"
+      "cjs"
     ],
     "dts": {
       "resolve": true
