@@ -17,7 +17,7 @@ export function render(element: ReactNode, hostContainer: HTMLCanvasElement) {
     view: hostContainer,
   });
 
-  const rootElement = createElement("View", /* isRootElement= */ true);
+  const rootElement = createElement("View");
   app.stage.addChild(rootElement.displayObject);
 
   const container = ReactLumaReconciler.createContainer(

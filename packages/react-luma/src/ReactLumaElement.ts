@@ -6,7 +6,6 @@ const LUMA_ELEMENT_SYMBOL = Symbol("lumaElementSymbol");
 
 export type ReactLumaElement = {
   yogaNode: yoga.YogaNode;
-  isRootElement: boolean;
 } & (
   | {
       type: "View";
@@ -31,10 +30,7 @@ export function getElement(obj: any): ReactLumaElement {
   return obj[LUMA_ELEMENT_SYMBOL];
 }
 
-export function createElement(
-  type: ReactLumaElementType,
-  isRootElement: boolean = false
-): ReactLumaElement {
+export function createElement(type: ReactLumaElementType): ReactLumaElement {
   let displayObject: any;
   if (type === "Text") {
     displayObject = new PIXI.Text();
@@ -50,7 +46,6 @@ export function createElement(
     type,
     displayObject,
     yogaNode: yoga.Node.create(),
-    isRootElement,
   };
 
   displayObject[LUMA_ELEMENT_SYMBOL] = lumaElement;
