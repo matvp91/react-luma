@@ -38,6 +38,7 @@ export type ReactLumaElementStyle = {
 
 export type ReactLumaElementTransform = {
   left?: number;
+  top?: number;
 };
 
 export type ReactLumaElementViewProps = {

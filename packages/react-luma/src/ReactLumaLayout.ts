@@ -107,6 +107,10 @@ export function setElementTransform(
   if (transform.left !== undefined) {
     element.displayObject.position.x = transform.left;
   }
+
+  if (transform.top !== undefined) {
+    element.displayObject.position.y = transform.top;
+  }
 }
 
 export function setElementAttribute(

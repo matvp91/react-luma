@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef, forwardRef } from "react";
 import { render, View, Text, Sprite, Image, TEXTURE_WHITE } from "react-luma";
 import {
   NavProvider,
@@ -16,7 +16,7 @@ type SwimlaneProps = {
   tmdbPath: string;
 };
 
-function Swimlane(props: SwimlaneProps) {
+const Swimlane = forwardRef((props: SwimlaneProps, forwardedRef) => {
   const containerRef = useRef<ReactLumaElement>();
 
   const [items, setItems] = useState<
@@ -54,7 +54,7 @@ function Swimlane(props: SwimlaneProps) {
   }, [props.id, nav.focusedElement]);
 
   return (
-    <View style={{ marginBottom: 12 }}>
+    <View ref={forwardedRef} style={{ marginBottom: 12 }}>
       <Text style={{ marginBottom: 6 }} text={props.title} />
       <FocusSection id={props.id}>
         <View
@@ -85,6 +85,72 @@ function Swimlane(props: SwimlaneProps) {
           ))}
         </View>
       </FocusSection>
+    </View>
+  );
+});
+
+function Swimlanes() {
+  const nav = useNavigation();
+
+  const containerRef = useRef<ReactLumaElement>();
+  const itemsRef = useRef<{
+    [id: string]: ReactLumaElement;
+  }>({});
+  const [top, setTop] = useState(0);
+
+  useEffect(() => {
+    if (!nav.focusedElement || !containerRef.current) {
+      return;
+    }
+    const id = nav.manager.getSectionId(nav.focusedElement);
+    const lane = itemsRef.current[id];
+    if (!lane) {
+      return;
+    }
+    const delta =
+      containerRef.current.displayObject.getGlobalPosition().y -
+      lane.displayObject.getGlobalPosition().y;
+
+    // TODO: We should not count transform as position.
+    setTop(delta + 212);
+  }, [nav.focusedElement]);
+
+  return (
+    <View ref={containerRef} style={{ marginLeft: 12 }} transform={{ top }}>
+      <Swimlane
+        ref={(el) => {
+          itemsRef.current["swimlane_top_movies"] = el;
+        }}
+        id="swimlane_top_movies"
+        title="Top movies"
+        tmdbPath="/movie/popular"
+      />
+      <Swimlane
+        ref={(el) => {
+          itemsRef.current["swimlane_popular_tv"] = el;
+        }}
+        id="swimlane_popular_tv"
+        title="Top on TV"
+        tmdbPath="/tv/popular"
+      />
+      <Swimlane
+        ref={(el) => {
+          itemsRef.current["swimlane_upcoming_movies"] = el;
+        }}
+        id="swimlane_upcoming_movies"
+        title="Upcoming movies"
+        tmdbPath="/movie/upcoming"
+      />
+      {/* <Swimlane
+            id="swimlane_toprated_tv"
+            title="Top rated TV"
+            tmdbPath="/tv/top_rated"
+          />
+          <Swimlane
+            id="swimlane_toprated_movies"
+            title="Top rated movies"
+            tmdbPath="/movie/top_rated"
+          />  */}
     </View>
   );
 }
@@ -131,32 +197,9 @@ function App() {
             )}
           </FocusSection>
         </View>
-        <View style={{ marginLeft: 12 }}>
-          <Swimlane
-            id="swimlane_top_movies"
-            title="Top movies"
-            tmdbPath="/movie/popular"
-          />
-          <Swimlane
-            id="swimlane_popular_tv"
-            title="Top on TV"
-            tmdbPath="/tv/popular"
-          />
-          <Swimlane
-            id="swimlane_upcoming_movies"
-            title="Upcoming movies"
-            tmdbPath="/movie/upcoming"
-          />
-          {/* <Swimlane
-            id="swimlane_toprated_tv"
-            title="Top rated TV"
-            tmdbPath="/tv/top_rated"
-          />
-          <Swimlane
-            id="swimlane_toprated_movies"
-            title="Top rated movies"
-            tmdbPath="/movie/top_rated"
-          />  */}
+        <View style={{ flexDirection: "column" }}>
+          <View style={{ height: 200 }} />
+          <Swimlanes />
         </View>
       </View>
     </NavProvider>
