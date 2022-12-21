@@ -1,6 +1,12 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { render, View, Text, Sprite, Image, TEXTURE_WHITE } from "react-luma";
-import { NavProvider, FocusSection, Focusable } from "react-luma/navigation";
+import {
+  NavProvider,
+  FocusSection,
+  Focusable,
+  useNavigation,
+} from "react-luma/navigation";
+import type { ReactLumaElement } from "react-luma";
 
 const TMDB_API_KEY = "fbba46e1c3147f982c3b7d32995add6b";
 
@@ -11,6 +17,8 @@ type SwimlaneProps = {
 };
 
 function Swimlane(props: SwimlaneProps) {
+  const containerRef = useRef<ReactLumaElement>();
+
   const [items, setItems] = useState<
     {
       id: string;
@@ -29,11 +37,27 @@ function Swimlane(props: SwimlaneProps) {
     fetchData();
   }, [props.tmdbPath]);
 
+  const nav = useNavigation();
+
+  const [left, setLeft] = useState(0);
+  useEffect(() => {
+    if (nav.focusedElement && containerRef.current) {
+      const delta =
+        containerRef.current.displayObject.getBounds().left -
+        nav.focusedElement.displayObject.getBounds().left;
+      setLeft(delta);
+    }
+  }, [nav.focusedElement]);
+
   return (
     <View style={{ marginBottom: 12 }}>
       <Text style={{ marginBottom: 6 }} text={props.title} />
       <FocusSection id={props.id}>
-        <View style={{ flexDirection: "row" }}>
+        <View
+          ref={containerRef}
+          style={{ flexDirection: "row" }}
+          transform={{ left }}
+        >
           {items.map((item) => (
             <Focusable key={item.id}>
               {(hasFocus) => (
@@ -67,15 +91,19 @@ function App() {
                 <View style={{ flexDirection: "row", marginBottom: 12 }}>
                   <Focusable>
                     {(hasFocus) => (
-                      <Text text={hasSectionFocus ? "One" : "O"} />
+                      <Text
+                        text={hasSectionFocus ? "One" : "O"}
+                        fill={hasFocus ? "#ff0000" : "#000000"}
+                      />
                     )}
                   </Focusable>
                 </View>
-                {/* <View style={{ flexDirection: "row", marginBottom: 12 }}>
+                <View style={{ flexDirection: "row", marginBottom: 12 }}>
                   <Focusable>
                     {(hasFocus) => (
                       <Text
                         text={hasSectionFocus ? "Two" : "T"}
+                        fill={hasFocus ? "#ff0000" : "#000000"}
                       />
                     )}
                   </Focusable>
@@ -85,10 +113,11 @@ function App() {
                     {(hasFocus) => (
                       <Text
                         text={hasSectionFocus ? "Three" : "T"}
+                        fill={hasFocus ? "#ff0000" : "#000000"}
                       />
                     )}
                   </Focusable>
-                </View> */}
+                </View>
               </View>
             )}
           </FocusSection>
@@ -127,5 +156,8 @@ function App() {
 
 const container = document.getElementById("root");
 if (container instanceof HTMLCanvasElement) {
-  render(<App />, container);
+  render(<App />, container, {
+    width: 1080,
+    backgroundColor: "#f1f1f1",
+  });
 }

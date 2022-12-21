@@ -29,5 +29,7 @@ export function Focusable(props: FocusableProps) {
 
   const hasFocus = focusedElement ? ref.current === focusedElement : false;
 
+  const bounds = ref.current?.displayObject.getBounds();
+
   return <View ref={ref}>{props.children(hasFocus)}</View>;
 }

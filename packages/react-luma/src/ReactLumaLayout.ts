@@ -50,6 +50,10 @@ function setTextProps(
   const localBounds = element.displayObject.getLocalBounds();
   element.yogaNode.setWidth(localBounds.width);
   element.yogaNode.setHeight(localBounds.height);
+
+  if (props.fill) {
+    element.displayObject.style.fill = PIXI.utils.string2hex(props.fill);
+  }
 }
 
 function setSpriteProps(
@@ -118,6 +122,12 @@ export function setElementProps(
     }
     if (margin.bottom) {
       element.yogaNode.setMargin(yoga.EDGE_BOTTOM, margin.bottom);
+    }
+  }
+
+  if (props.transform) {
+    if (props.transform.left !== undefined) {
+      element.displayObject.position.x = props.transform.left;
     }
   }
 }

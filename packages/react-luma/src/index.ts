@@ -4,6 +4,8 @@ export * from "./types";
 
 export { render } from "./ReactLumaRender";
 
+export type { ReactLumaElement } from "./ReactLumaElement";
+
 export const View = "View";
 export const Text = "Text";
 export const Sprite = "Sprite";

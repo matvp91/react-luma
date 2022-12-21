@@ -34,14 +34,20 @@ export type ReactLumaElementStyle = {
   height?: number;
 };
 
+export type ReactLumaElementTransform = {
+  left?: number;
+};
+
 export type ReactLumaElementViewProps = {
   style?: ReactLumaElementStyle;
+  transform?: ReactLumaElementTransform;
   children?: ReactNode;
   ref?: Ref<ReactLumaElement>;
 };
 
 export type ReactLumaElementSpriteProps = {
   style?: ReactLumaElementStyle;
+  transform?: ReactLumaElementTransform;
   children?: ReactNode;
   ref?: Ref<ReactLumaElement>;
   texture?: PIXI.Texture;
@@ -50,8 +56,10 @@ export type ReactLumaElementSpriteProps = {
 
 export type ReactLumaElementTextProps = {
   style?: ReactLumaElementStyle;
+  transform?: ReactLumaElementTransform;
   ref?: Ref<ReactLumaElement>;
   text: string;
+  fill?: string;
 };
 
 declare global {

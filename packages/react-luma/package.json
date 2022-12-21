@@ -27,6 +27,7 @@
     "@types/node": "^18.11.15",
     "@types/react": "^18.0.26",
     "@types/react-reconciler": "0.28.0",
+    "@types/stats.js": "^0.17.0",
     "@types/yoga-layout": "^1.9.4",
     "esbuild": "^0.16.7",
     "tsup": "^6.5.0",
@@ -35,7 +36,8 @@
   "dependencies": {
     "@react-pdf/yoga": "^3.0.0",
     "pixi.js": "^7.0.5",
-    "react-reconciler": "0.29.0"
+    "react-reconciler": "0.29.0",
+    "stats.js": "^0.17.0"
   },
   "tsup": {
     "entry": [
