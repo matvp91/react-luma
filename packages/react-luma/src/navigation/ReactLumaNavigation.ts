@@ -523,12 +523,15 @@ export function createManager() {
     return next;
   };
 
+  const getSectionIds = () => Object.keys(sections);
+
   return {
     addElement,
     removeElement,
     getNext,
     getNextInSection,
     getSectionId,
+    getSectionIds,
   };
 }
 

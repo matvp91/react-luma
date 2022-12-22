@@ -24,12 +24,6 @@ export default function NavigationProvider(props: NavigationProviderProps) {
     null
   );
 
-  // TODO: Debug, remove this
-  (window as any).initFocus = () => {
-    const element = manager.getNextInSection("mainMenu");
-    setFocusedElement(element);
-  };
-
   useEffect(() => {
     if (!focusedElement) {
       return;
@@ -57,6 +51,16 @@ export default function NavigationProvider(props: NavigationProviderProps) {
     return () => {
       window.removeEventListener("keydown", keyDown);
     };
+  }, [focusedElement]);
+
+  useEffect(() => {
+    if (!focusedElement) {
+      const firstSectionId = manager.getSectionIds()?.[0];
+      if (firstSectionId) {
+        const firstElement = manager.getNextInSection(firstSectionId);
+        setFocusedElement(firstElement);
+      }
+    }
   }, [focusedElement]);
 
   const value = useMemo(() => {
