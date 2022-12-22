@@ -4,7 +4,8 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "React Luma",
-  tagline: "React Luma is a custom React renderer to build WebGL apps",
+  tagline:
+    "React Luma is a React renderer for building user interfaces with WebGL",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
