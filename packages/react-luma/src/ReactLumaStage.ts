@@ -42,6 +42,12 @@ export function createContainer(
   });
   ReactLumaCurrentApp.current = app;
 
+  // const text = new PIXI.Text("FPS");
+  // app.stage.addChild(text);
+  // PIXI.Ticker.shared.add(() => {
+  //   text.text = PIXI.Ticker.shared.FPS;
+  // });
+
   const rootElement = createElement("View");
   setElementStyle(rootElement, {
     width: "100%",

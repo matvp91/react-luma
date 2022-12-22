@@ -14,6 +14,7 @@ import {
   focusableSection,
   useFocusedElement,
 } from "react-luma/navigation";
+import { useAnimation } from "react-luma/animation";
 import { ReactLumaElement, ReactLumaElementStyle } from "react-luma";
 
 const TMDB_API_KEY = "fbba46e1c3147f982c3b7d32995add6b";
@@ -61,7 +62,7 @@ const SwimlaneItem = focusable<SwimlaneItemProps>((props) => {
         alignItems: "center",
         justifyContent: "center",
       }}
-      tint={props.isFocus ? "#ff0000" : "#ffffff"}
+      tint={props.isFocus ? "#ffffff" : "#ffffff"}
       texture={TEXTURE_WHITE}
     >
       <Image src={props.imageSrc} style={{ width: 100, height: 150 }} />
@@ -97,10 +98,14 @@ const Swimlane = focusableSection<SwimlaneProps, ReactLumaElement>((props) => {
     return refX.current;
   }, [props.isFocus, focusedElement]);
 
+  useAnimation(x, (newX) => {
+    ref.current!.x = newX;
+  });
+
   return (
     <View ref={props.forwardedRef} style={{ marginBottom: 12 }}>
       <Text style={{ marginBottom: 6 }} text={props.title} />
-      <View ref={ref} style={{ flexDirection: "row" }} transform={{ x }}>
+      <View ref={ref} style={{ flexDirection: "row" }}>
         {data ? (
           data.results.map((item) => (
             <SwimlaneItem
@@ -115,6 +120,44 @@ const Swimlane = focusableSection<SwimlaneProps, ReactLumaElement>((props) => {
     </View>
   );
 });
+
+function BorderBox() {
+  const borderWidth = 7;
+  const width = 110;
+  const height = 160;
+  return (
+    <View
+      style={{ position: "absolute" }}
+      transform={{
+        x: 13,
+        y: 36 + 300,
+      }}
+    >
+      <Sprite
+        tint="#ff0000"
+        texture={TEXTURE_WHITE}
+        style={{ position: "absolute", width: borderWidth, height: height }}
+      />
+      <Sprite
+        tint="#ff0000"
+        texture={TEXTURE_WHITE}
+        style={{ width: borderWidth, height: height }}
+        transform={{ position: "absolute", x: width - borderWidth }}
+      />
+      <Sprite
+        tint="#ff0000"
+        texture={TEXTURE_WHITE}
+        style={{ position: "absolute", width: width, height: borderWidth }}
+      />
+      <Sprite
+        tint="#ff0000"
+        texture={TEXTURE_WHITE}
+        style={{ position: "absolute", width: width, height: borderWidth }}
+        transform={{ position: "absolute", y: height - borderWidth }}
+      />
+    </View>
+  );
+}
 
 function Swimlanes() {
   const [_, focusedElementSectionId] = useFocusedElement();
@@ -134,17 +177,38 @@ function Swimlanes() {
   }, [focusedElementSectionId]);
 
   return (
-    <View ref={containerRef} style={{ marginLeft: 12 }} transform={{ y }}>
-      {swimlanesData.map((data, index) => (
-        <Swimlane
-          key={data.id}
-          sectionId={data.id}
-          ref={registerSwimlaneElement(data.id)}
-          id={data.id}
-          title={data.title}
-          tmdbPath={data.tmdbPath}
+    <View>
+      <View
+        ref={containerRef}
+        style={{ marginLeft: 12, marginTop: 300 }}
+        transform={{ y }}
+      >
+        {swimlanesData.map((data) => (
+          <Swimlane
+            key={data.id}
+            sectionId={data.id}
+            ref={registerSwimlaneElement(data.id)}
+            id={data.id}
+            title={data.title}
+            tmdbPath={data.tmdbPath}
+          />
+        ))}
+      </View>
+      <View
+        style={{
+          height: 300,
+          width: "100%",
+          padding: 12,
+          position: "absolute",
+        }}
+      >
+        <Sprite
+          tint="#f5f5f5"
+          texture={TEXTURE_WHITE}
+          style={{ width: "100%", height: "100%" }}
         />
-      ))}
+      </View>
+      <BorderBox />
     </View>
   );
 }
@@ -178,7 +242,7 @@ const Menu = focusableSection((props) => {
 function App() {
   return (
     <NavigationProvider>
-      <View style={{ flexDirection: "row", padding: 12 }}>
+      <View style={{ flexDirection: "row", padding: 12, marginTop: 12 }}>
         <Menu sectionId="mainMenu">
           <MenuItem title="One" style={{ marginBottom: 12 }} />
           <MenuItem title="Two" style={{ marginBottom: 12 }} />

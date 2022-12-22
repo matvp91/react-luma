@@ -5,7 +5,7 @@
   "type": "web",
   "icon": "icon.png",
   "vendor": "Matthias Van Parijs",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "appDescription": "React Luma on webOS",
-  "requiredMemory": 250
+  "requiredMemory": 100
 }

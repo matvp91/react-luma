@@ -12,6 +12,10 @@
     "./navigation": {
       "import": "./dist/navigation/index.js",
       "default": "./dist/navigation/index.cjs"
+    },
+    "./animation": {
+      "import": "./dist/animation/index.js",
+      "default": "./dist/animation/index.cjs"
     }
   },
   "scripts": {
@@ -34,6 +38,7 @@
   },
   "dependencies": {
     "@react-pdf/yoga": "^3.0.0",
+    "@tweenjs/tween.js": "^18.6.4",
     "pixi.js": "^7.0.5",
     "react-reconciler": "0.29.0",
     "stats.js": "^0.17.0",
@@ -43,7 +48,8 @@
   "tsup": {
     "entry": [
       "src/index.ts",
-      "src/navigation/index.ts"
+      "src/navigation/index.ts",
+      "src/animation/index.ts"
     ],
     "format": [
       "esm",

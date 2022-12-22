@@ -20,6 +20,6 @@ await $`cp -R ./scripts/targets/webos/ ${tmpPath}/source`;
 await $`${aresCmd("package")} ${tmpPath}/source --outdir ${tmpPath}`;
 await $`${aresCmd(
   "install"
-)} -d home ${tmpPath}/be.matvp91.react-luma_1.0.0_all.ipk`;
+)} -d home ${tmpPath}/be.matvp91.react-luma_1.0.1_all.ipk`;
 await $`${aresCmd("launch")} -d home be.matvp91.react-luma`;
-await $`${aresCmd("inspect")} -d home be.matvp91.react-luma`;
+// await $`${aresCmd("inspect")} -d home be.matvp91.react-luma`;

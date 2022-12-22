@@ -54,6 +54,10 @@ export function setElementStyle(
 ) {
   element.yogaNode.setDisplay(yoga.DISPLAY_FLEX);
 
+  if (style.position === "absolute") {
+    element.yogaNode.setPositionType(yoga.POSITION_TYPE_ABSOLUTE);
+  }
+
   if (style.flexDirection === "row") {
     element.yogaNode.setFlexDirection(yoga.FLEX_DIRECTION_ROW);
   } else if (style.flexDirection === "column") {
