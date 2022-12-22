@@ -1,8 +1,8 @@
 import * as PIXI from "pixi.js";
 import yoga from "@react-pdf/yoga";
-import { getElement } from "./ReactLumaElement";
 import * as t from "typed-assert";
 import { ReactLumaCurrentApp } from "./ReactLumaStage";
+import { isElementOfType } from "./ReactLumaElement";
 import type { ReactLumaElement } from "./ReactLumaElement";
 import type { ReactLumaElementStyle, ReactLumaElementTransform } from "./types";
 
@@ -23,20 +23,16 @@ function extractShortHandToPosition(
 function appendStyle(element: ReactLumaElement) {
   const layout = element.yogaNode.getComputedLayout();
 
-  element.displayObject.position.x = layout.left;
-  element.displayObject.position.y = layout.top;
+  element.x = layout.left;
+  element.y = layout.top;
 
   if (element.type == "Sprite") {
-    element.displayObject.width = layout.width;
-    element.displayObject.height = layout.height;
+    element.width = layout.width;
+    element.height = layout.height;
   }
 
-  const childrenCount = element.displayObject.children.length;
-
-  for (let i = 0; i < childrenCount; i++) {
-    const child = getElement(element.displayObject.children[i]);
-    appendStyle(child);
-  }
+  // Traverse the tree and append style for each child.
+  element.getChildren().forEach(appendStyle);
 }
 
 export function calculateLayout(element: ReactLumaElement) {
@@ -116,11 +112,11 @@ export function setElementTransform(
   }
 
   if (transform.left !== undefined) {
-    element.displayObject.position.x = transform.left;
+    element.x = transform.left;
   }
 
   if (transform.top !== undefined) {
-    element.displayObject.position.y = transform.top;
+    element.y = transform.top;
   }
 }
 
@@ -129,35 +125,38 @@ export function setElementAttribute(
   key: string,
   value: unknown
 ) {
-  if (element.type === "Text") {
+  if (isElementOfType(element, "Text")) {
     if (key === "text" && value !== undefined) {
       t.isString(value, `Text ${key}=${value} is not a string.`);
-      element.displayObject.text = value;
 
-      const localBounds = element.displayObject.getLocalBounds();
+      element.text = value;
+
+      const localBounds = element.getLocalBounds();
       element.yogaNode.setWidth(localBounds.width);
       element.yogaNode.setHeight(localBounds.height);
     }
     if (key === "fill" && value !== undefined) {
       t.isString(value, `Text ${key}=${value} is not a string.`);
-      element.displayObject.style.fill = PIXI.utils.string2hex(value);
+
+      element.fill = value;
     }
   }
 
-  if (element.type === "Sprite") {
+  if (isElementOfType(element, "Sprite")) {
     if (key === "texture" && value !== undefined) {
       t.isInstanceOf(value, PIXI.Texture, `Sprite ${key} is not a texture.`);
 
-      element.displayObject.texture = value;
+      element.texture = value;
 
       const layout = ensureYogaNodeLayout(element.yogaNode);
-      element.displayObject.width = layout.width;
-      element.displayObject.height = layout.height;
+      element.width = layout.width;
+      element.height = layout.height;
     }
 
     if (key === "tint" && value !== undefined) {
       t.isString(value, `Sprite ${key}=${value} is not a string.`);
-      element.displayObject.tint = PIXI.utils.string2hex(value);
+
+      element.tint = value;
     }
   }
 }

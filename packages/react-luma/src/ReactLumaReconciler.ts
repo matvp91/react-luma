@@ -3,12 +3,8 @@ import createReconciler from "react-reconciler";
 import { DefaultEventPriority } from "react-reconciler/constants";
 import {
   createElement,
-  appendChild,
-  insertBefore,
-  removeChild,
   ReactLumaElement,
   ReactLumaElementType,
-  getElement,
 } from "./ReactLumaElement";
 import {
   setElementAttribute,
@@ -82,15 +78,15 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendInitialChild(parentInstance, child) {
-    appendChild(parentInstance, child);
+    parentInstance.appendChild(child);
   },
 
   appendChild(parentInstance, child) {
-    appendChild(parentInstance, child);
+    parentInstance.appendChild(child);
   },
 
   removeChild(parentInstance, child) {
-    removeChild(parentInstance, child);
+    parentInstance.removeChild(child);
   },
 
   finalizeInitialChildren() {
@@ -98,15 +94,15 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendChildToContainer(container, child) {
-    appendChild(container, child);
+    container.appendChild(child);
   },
 
   insertInContainerBefore(container, child, beforeChild) {
-    insertBefore(container, child, beforeChild);
+    container.insertBefore(child, beforeChild);
   },
 
   removeChildFromContainer(container, child) {
-    removeChild(container, child);
+    container.removeChild(child);
   },
 
   clearContainer() {

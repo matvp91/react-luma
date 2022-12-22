@@ -47,7 +47,7 @@ export function createContainer(
     width: "100%",
     height: "100%",
   });
-  app.stage.addChild(rootElement.displayObject);
+  app.stage.addChild(rootElement.unstable_getDisplayObject());
 
   return ReactLumaReconciler.createContainer(
     rootElement,
