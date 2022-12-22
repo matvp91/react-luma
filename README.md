@@ -1,6 +1,6 @@
 # React Luma
 
-React Luma is a React renderer for building user interfaces on a WebGL canvas. Perfect for TV.
+React Luma is a React renderer for building user interfaces with WebGL. Perfect for TV.
 
 ## Documentation
 
