@@ -5,14 +5,14 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 const config = {
   title: "React Luma",
   tagline: "React Luma is a custom React renderer to build WebGL apps.",
-  url: "https://react-luma.com",
-  baseUrl: "/",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
-  favicon: "img/favicon.ico",
 
+  url: "https://matvp91.github.io",
+  baseUrl: "/react-luma",
   organizationName: "matvp91",
   projectName: "react-luma",
+  trailingSlash: false,
 
   i18n: {
     defaultLocale: "en",

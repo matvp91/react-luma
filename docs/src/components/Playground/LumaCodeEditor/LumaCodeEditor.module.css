@@ -21,6 +21,12 @@
   background-color: #fdfdfd;
 }
 
+@media screen and (max-width: 996px) {
+  .canvasContainer {
+    max-width: 100%;
+  }
+}
+
 .canvasContainer canvas {
   width: 100%;
 }
