@@ -13,3 +13,5 @@ export const Sprite = "Sprite";
 export { default as Image } from "./components/Image";
 
 export const TEXTURE_WHITE = PIXI.Texture.WHITE;
+
+export { useMultiRef } from "./hooks";

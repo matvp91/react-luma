@@ -1,4 +1,4 @@
-import { createContext, useState, useEffect } from "react";
+import { createContext, useState, useEffect, useContext } from "react";
 import { createManager } from "../ReactLumaNavigation";
 import { useRefValue } from "../../hooks";
 import type { ReactNode, Dispatch, SetStateAction } from "react";
@@ -7,13 +7,17 @@ import type { Direction } from "../ReactLumaNavigation";
 
 type NavProviderProps = {
   children: ReactNode;
-  defaultSectionId: string;
 };
 
 type NavProviderContext = {
-  manager: ReturnType<typeof createManager>;
-  setFocusedElement: Dispatch<SetStateAction<ReactLumaElement | null>>;
-  focusedElement: ReactLumaElement | null;
+  focused: NavFocused | null;
+  _setFocused: Dispatch<SetStateAction<NavFocused | null>>;
+  _manager: ReturnType<typeof createManager>;
+};
+
+type NavFocused = {
+  element: ReactLumaElement;
+  sectionId: string;
 };
 
 export const NavProviderContext = createContext<NavProviderContext>(
@@ -21,16 +25,15 @@ export const NavProviderContext = createContext<NavProviderContext>(
 );
 
 export function NavProvider(props: NavProviderProps) {
-  const [focusedElement, setFocusedElement] =
-    useState<NavProviderContext["focusedElement"]>(null);
-  const manager = useRefValue<NavProviderContext["manager"]>(createManager);
+  const [focused, setFocused] = useState<NavFocused | null>(null);
+  const manager = useRefValue(createManager);
 
   useEffect(() => {
-    const keyDown = (event: KeyboardEvent) => {
-      if (!focusedElement) {
-        return null;
-      }
+    if (!focused) {
+      return;
+    }
 
+    const keyDown = (event: KeyboardEvent) => {
       const direction = {
         ArrowUp: "up",
         ArrowDown: "down",
@@ -42,9 +45,12 @@ export function NavProvider(props: NavProviderProps) {
         return null;
       }
 
-      const nextElement = manager.getNext(direction, focusedElement);
+      const nextElement = manager.getNext(direction, focused.element);
       if (nextElement) {
-        setFocusedElement(nextElement);
+        setFocused({
+          element: nextElement,
+          sectionId: manager.getSectionId(nextElement),
+        });
       }
     };
 
@@ -52,24 +58,21 @@ export function NavProvider(props: NavProviderProps) {
     return () => {
       window.removeEventListener("keydown", keyDown);
     };
-  }, [manager, focusedElement]);
-
-  useEffect(() => {
-    const nextElement = manager.getNextInSection(props.defaultSectionId);
-    if (nextElement) {
-      setFocusedElement(nextElement);
-    }
-  }, [manager, props.defaultSectionId]);
+  }, [manager, focused]);
 
   return (
     <NavProviderContext.Provider
       value={{
-        manager,
-        setFocusedElement,
-        focusedElement,
+        focused,
+        _setFocused: setFocused,
+        _manager: manager,
       }}
     >
       {props.children}
     </NavProviderContext.Provider>
   );
+}
+
+export function useNav() {
+  return useContext(NavProviderContext);
 }

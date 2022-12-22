@@ -1,5 +1,5 @@
 import * as PIXI from "pixi.js";
-import type { ReactNode, Ref } from "react";
+import type { ReactNode, MutableRefObject, ForwardedRef } from "react";
 import type { ReactLumaElement } from "./ReactLumaElement";
 
 type PickCommon<A, B> = Pick<
@@ -37,22 +37,26 @@ export type ReactLumaElementStyle = {
 };
 
 export type ReactLumaElementTransform = {
-  left?: number;
-  top?: number;
+  x?: number;
+  y?: number;
 };
+
+type ReactLumaElementRef =
+  | MutableRefObject<ReactLumaElement | undefined>
+  | ForwardedRef<ReactLumaElement>;
 
 export type ReactLumaElementViewProps = {
   style?: ReactLumaElementStyle;
   transform?: ReactLumaElementTransform;
   children?: ReactNode;
-  ref?: Ref<ReactLumaElement>;
+  ref?: ReactLumaElementRef;
 };
 
 export type ReactLumaElementSpriteProps = {
   style?: ReactLumaElementStyle;
   transform?: ReactLumaElementTransform;
   children?: ReactNode;
-  ref?: Ref<ReactLumaElement>;
+  ref?: ReactLumaElementRef;
   texture?: PIXI.Texture;
   tint?: string;
 };
@@ -60,7 +64,7 @@ export type ReactLumaElementSpriteProps = {
 export type ReactLumaElementTextProps = {
   style?: ReactLumaElementStyle;
   transform?: ReactLumaElementTransform;
-  ref?: Ref<ReactLumaElement>;
+  ref?: ReactLumaElementRef;
   text: string;
   fill?: string;
 };

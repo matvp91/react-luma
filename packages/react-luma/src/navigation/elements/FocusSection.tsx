@@ -12,15 +12,11 @@ type FocusSectionProps = {
 export const FocusSectionContext = createContext<string>("default");
 
 export function FocusSection(props: FocusSectionProps) {
-  const { manager, focusedElement } = useContext(NavProviderContext);
+  const { focused } = useContext(NavProviderContext);
 
   let children = props.children;
   if (typeof children === "function") {
-    // TODO: Using getSectionId might be unnecessary here, we could explicitly set
-    // the section id in the provider instead and save us some iterations per render.
-    const hasFocus = focusedElement
-      ? manager.getSectionId(focusedElement) === props.id
-      : false;
+    const hasFocus = !!focused && focused.sectionId === props.id;
     children = children(hasFocus);
   }
 

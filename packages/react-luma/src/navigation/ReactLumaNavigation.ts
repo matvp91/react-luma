@@ -291,13 +291,13 @@ function getCenter(rect: Rect): Rect {
 }
 
 function getRect(element: ReactLumaElement): Rect {
-  const bounds = element.displayObject.getBounds();
+  const globalPosition = element.getGlobalPosition();
   return {
     element,
-    left: bounds.left,
-    right: bounds.right,
-    top: bounds.top,
-    bottom: bounds.bottom,
+    left: globalPosition.x,
+    right: globalPosition.x + element.width,
+    top: globalPosition.y,
+    bottom: globalPosition.y + element.height,
   };
 }
 

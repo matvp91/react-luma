@@ -44,6 +44,14 @@ abstract class ReactLumaElement {
 
   protected abstract displayObject: PIXI.Container;
 
+  private _x: number = 0;
+
+  private _y: number = 0;
+
+  private _transformX: number = 0;
+
+  private _transformY: number = 0;
+
   rootRecalcLayout = false;
 
   constructor(type: ReactLumaElementType) {
@@ -79,16 +87,26 @@ abstract class ReactLumaElement {
     return this.displayObject.children.map(unstable_getElement);
   }
 
-  getLocalBounds() {
-    return this.displayObject.getLocalBounds();
+  getGlobalPosition() {
+    return this.displayObject.getGlobalPosition();
   }
 
   set x(value: number) {
-    this.displayObject.position.x = value;
+    this._x = value;
+    this.displayObject.x = this._x + this._transformX;
+  }
+
+  get x() {
+    return this._x;
   }
 
   set y(value: number) {
-    this.displayObject.position.y = value;
+    this._y = value;
+    this.displayObject.y = this._y + this._transformY;
+  }
+
+  get y() {
+    return this._y;
   }
 
   set width(value: number) {
@@ -97,6 +115,24 @@ abstract class ReactLumaElement {
 
   set height(value: number) {
     this.displayObject.height = value;
+  }
+
+  get width() {
+    return this.displayObject.width;
+  }
+
+  get height() {
+    return this.displayObject.height;
+  }
+
+  set transformX(value: number) {
+    this._transformX = value;
+    this.x = this.x;
+  }
+
+  set transformY(value: number) {
+    this._transformY = value;
+    this.y = this.y;
   }
 
   unstable_getDisplayObject() {

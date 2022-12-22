@@ -1,163 +1,165 @@
-import { useState, useEffect, useRef, forwardRef } from "react";
-import { render, View, Text, Sprite, Image, TEXTURE_WHITE } from "react-luma";
+import { useState, useEffect, useRef, forwardRef, useMemo } from "react";
+import {
+  render,
+  View,
+  Text,
+  Sprite,
+  Image,
+  TEXTURE_WHITE,
+  useMultiRef,
+} from "react-luma";
 import {
   NavProvider,
   FocusSection,
   Focusable,
-  useNavigation,
+  useNav,
 } from "react-luma/navigation";
-import type { ReactLumaElement } from "react-luma";
+import { ReactLumaElement } from "react-luma";
 
 const TMDB_API_KEY = "fbba46e1c3147f982c3b7d32995add6b";
 
+const swimlanesData = [
+  {
+    id: "swimlane_top_movies",
+    title: "Top movies",
+    tmdbPath: "/movie/popular",
+  },
+  {
+    id: "swimlane_popular_tv",
+    title: "Top on TV",
+    tmdbPath: "/tv/popular",
+  },
+  {
+    id: "swimlane_upcoming_movies",
+    title: "Upcoming movies",
+    tmdbPath: "/movie/upcoming",
+  },
+];
+
+function useFetchData<T>(url: string) {
+  const [data, setData] = useState<T | null>(null);
+
+  useEffect(() => {
+    fetch(url)
+      .then((response) => response.json())
+      .then((data) => setData(data));
+  }, [url]);
+
+  return data;
+}
+
 type SwimlaneProps = {
+  index: number;
   id: string;
   title: string;
   tmdbPath: string;
 };
 
-const Swimlane = forwardRef((props: SwimlaneProps, forwardedRef) => {
-  const containerRef = useRef<ReactLumaElement>();
+const Swimlane = forwardRef<ReactLumaElement, SwimlaneProps>(
+  (props, forwardedRef) => {
+    const { focused } = useNav();
+    const containerRef = useRef<ReactLumaElement | undefined>();
+    const data = useFetchData<{
+      results: {
+        id: string;
+        poster_path: string;
+      }[];
+    }>(`https://api.themoviedb.org/3${props.tmdbPath}?api_key=${TMDB_API_KEY}`);
 
-  const [items, setItems] = useState<
-    {
-      id: string;
-      poster_path: string;
-    }[]
-  >([]);
+    const scopedFocused =
+      focused && focused.sectionId === props.id ? focused : null;
 
-  useEffect(() => {
-    const fetchData = async () => {
-      const response = await fetch(
-        `https://api.themoviedb.org/3${props.tmdbPath}?api_key=${TMDB_API_KEY}`
-      );
-      const data = await response.json();
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-      setItems(data.results);
-    };
-    fetchData();
-  }, [props.tmdbPath]);
-
-  const nav = useNavigation();
-
-  const [left, setLeft] = useState(0);
-  useEffect(() => {
-    if (nav.focusedElement && containerRef.current) {
-      const sectionId = nav.manager.getSectionId(nav.focusedElement);
-      if (sectionId === props.id) {
-        const delta =
-          containerRef.current.displayObject.getBounds().left -
-          nav.focusedElement.displayObject.getBounds().left;
-        setLeft(delta);
+    const xRef = useRef<number>(0);
+    const x = useMemo(() => {
+      if (scopedFocused) {
+        xRef.current =
+          containerRef.current!.getGlobalPosition().x -
+          scopedFocused.element.getGlobalPosition().x;
       }
-    }
-  }, [props.id, nav.focusedElement]);
+      return xRef.current;
+    }, [scopedFocused]);
 
-  return (
-    <View ref={forwardedRef} style={{ marginBottom: 12 }}>
-      <Text style={{ marginBottom: 6 }} text={props.title} />
-      <FocusSection id={props.id}>
-        <View
-          ref={containerRef}
-          style={{ flexDirection: "row" }}
-          transform={{ left }}
-        >
-          {items.map((item) => (
-            <Focusable key={item.id}>
-              {(hasFocus) => (
-                <Sprite
-                  style={{
-                    width: 110,
-                    height: 160,
-                    alignItems: "center",
-                    justifyContent: "center",
-                  }}
-                  tint={hasFocus ? "#ff0000" : "#ffffff"}
-                  texture={TEXTURE_WHITE}
+    return (
+      <View ref={forwardedRef} style={{ marginBottom: 12 }}>
+        <Text style={{ marginBottom: 6 }} text={props.title} />
+        {!!data && (
+          <FocusSection id={props.id}>
+            <View
+              ref={containerRef}
+              style={{ flexDirection: "row" }}
+              transform={{ x }}
+            >
+              {data.results.map((item, itemIndex) => (
+                <Focusable
+                  key={item.id}
+                  unstable_focusOnMount={props.index === 0 && itemIndex === 0}
                 >
-                  <Image
-                    src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
-                    style={{ width: 100, height: 150 }}
-                  />
-                </Sprite>
-              )}
-            </Focusable>
-          ))}
-        </View>
-      </FocusSection>
-    </View>
-  );
-});
+                  {(hasFocus) => (
+                    <Sprite
+                      style={{
+                        width: 110,
+                        height: 160,
+                        alignItems: "center",
+                        justifyContent: "center",
+                      }}
+                      tint={hasFocus ? "#ff0000" : "#ffffff"}
+                      texture={TEXTURE_WHITE}
+                    >
+                      <Image
+                        src={`https://image.tmdb.org/t/p/w500${item.poster_path}`}
+                        style={{ width: 100, height: 150 }}
+                      />
+                    </Sprite>
+                  )}
+                </Focusable>
+              ))}
+            </View>
+          </FocusSection>
+        )}
+      </View>
+    );
+  }
+);
 
 function Swimlanes() {
-  const nav = useNavigation();
-
+  const { focused } = useNav();
   const containerRef = useRef<ReactLumaElement>();
-  const itemsRef = useRef<{
-    [id: string]: ReactLumaElement;
-  }>({});
-  const [top, setTop] = useState(0);
+  const [swimlaneElements, registerSwimlaneElement] =
+    useMultiRef<ReactLumaElement>();
 
-  useEffect(() => {
-    if (!nav.focusedElement || !containerRef.current) {
-      return;
+  const y = useMemo(() => {
+    if (!focused) {
+      return 0;
     }
-    const id = nav.manager.getSectionId(nav.focusedElement);
-    const lane = itemsRef.current[id];
-    if (!lane) {
-      return;
+    const swimlaneElement = swimlaneElements[focused.sectionId];
+    if (!swimlaneElement) {
+      return 0;
     }
-    const delta =
-      containerRef.current.displayObject.getGlobalPosition().y -
-      lane.displayObject.getGlobalPosition().y;
-
-    // TODO: We should not count transform as position.
-    setTop(delta + 12);
-  }, [nav.focusedElement]);
+    return (
+      containerRef.current!.getGlobalPosition().y -
+      swimlaneElement.getGlobalPosition().y
+    );
+  }, [focused]);
 
   return (
-    <View ref={containerRef} style={{ marginLeft: 12 }} transform={{ top }}>
-      <Swimlane
-        ref={(el) => {
-          itemsRef.current["swimlane_top_movies"] = el;
-        }}
-        id="swimlane_top_movies"
-        title="Top movies"
-        tmdbPath="/movie/popular"
-      />
-      <Swimlane
-        ref={(el) => {
-          itemsRef.current["swimlane_popular_tv"] = el;
-        }}
-        id="swimlane_popular_tv"
-        title="Top on TV"
-        tmdbPath="/tv/popular"
-      />
-      <Swimlane
-        ref={(el) => {
-          itemsRef.current["swimlane_upcoming_movies"] = el;
-        }}
-        id="swimlane_upcoming_movies"
-        title="Upcoming movies"
-        tmdbPath="/movie/upcoming"
-      />
-      {/* <Swimlane
-            id="swimlane_toprated_tv"
-            title="Top rated TV"
-            tmdbPath="/tv/top_rated"
-          />
-          <Swimlane
-            id="swimlane_toprated_movies"
-            title="Top rated movies"
-            tmdbPath="/movie/top_rated"
-          />  */}
+    <View ref={containerRef} style={{ marginLeft: 12 }} transform={{ y }}>
+      {swimlanesData.map((data, index) => (
+        <Swimlane
+          index={index}
+          key={data.id}
+          ref={registerSwimlaneElement(data.id)}
+          id={data.id}
+          title={data.title}
+          tmdbPath={data.tmdbPath}
+        />
+      ))}
     </View>
   );
 }
 
 function App() {
   return (
-    <NavProvider defaultSectionId="menu">
+    <NavProvider>
       <View style={{ flexDirection: "row", padding: 12 }}>
         <View style={{ flexDirection: "column" }}>
           <FocusSection id="menu">
@@ -202,18 +204,6 @@ function App() {
         </View>
       </View>
     </NavProvider>
-  );
-}
-
-function TestApp() {
-  const [width, setWidth] = useState("100%");
-  window.setWidth = setWidth;
-  return (
-    <Sprite
-      style={{ width, height: "100%" }}
-      texture={TEXTURE_WHITE}
-      tint="#ff00ff"
-    />
   );
 }
 

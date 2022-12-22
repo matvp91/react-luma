@@ -1,4 +1,4 @@
-import { useContext, useRef, useLayoutEffect } from "react";
+import { useContext, useRef, useLayoutEffect, useEffect } from "react";
 import { View } from "../../";
 import { FocusSectionContext } from "./FocusSection";
 import { NavProviderContext } from "./NavProvider";
@@ -9,27 +9,36 @@ type FocusableRenderProp = (hasFocus: boolean) => ReactNode;
 
 type FocusableProps = {
   children: FocusableRenderProp;
+  unstable_focusOnMount?: boolean;
 };
 
 export function Focusable(props: FocusableProps) {
   const ref = useRef<ReactLumaElement>(null);
   const sectionId = useContext(FocusSectionContext);
-  const { manager, focusedElement } = useContext(NavProviderContext);
+  const { _manager, _setFocused, focused } = useContext(NavProviderContext);
 
   useLayoutEffect(() => {
     const element = ref.current;
     if (!element) {
       return;
     }
-    manager.addElement(sectionId, element);
+    _manager.addElement(sectionId, element);
     return () => {
-      manager.removeElement(element);
+      _manager.removeElement(element);
     };
-  }, [sectionId, manager]);
+  }, [sectionId, _manager]);
 
-  const hasFocus = focusedElement ? ref.current === focusedElement : false;
+  useEffect(() => {
+    if (props.unstable_focusOnMount) {
+      const nextElement = ref.current!;
+      _setFocused({
+        element: nextElement,
+        sectionId: _manager.getSectionId(nextElement),
+      });
+    }
+  }, []);
 
-  const bounds = ref.current?.displayObject.getBounds();
+  const hasFocus = !!focused && ref.current === focused.element;
 
   return <View ref={ref}>{props.children(hasFocus)}</View>;
 }

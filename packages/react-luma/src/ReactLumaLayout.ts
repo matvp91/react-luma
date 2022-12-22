@@ -107,16 +107,12 @@ export function setElementTransform(
   element: ReactLumaElement,
   transform: ReactLumaElementTransform
 ) {
-  if (!transform) {
-    return;
+  if (transform.x !== undefined) {
+    element.transformX = transform.x;
   }
 
-  if (transform.left !== undefined) {
-    element.x = transform.left;
-  }
-
-  if (transform.top !== undefined) {
-    element.y = transform.top;
+  if (transform.y !== undefined) {
+    element.transformY = transform.y;
   }
 }
 
@@ -131,9 +127,8 @@ export function setElementAttribute(
 
       element.text = value;
 
-      const localBounds = element.getLocalBounds();
-      element.yogaNode.setWidth(localBounds.width);
-      element.yogaNode.setHeight(localBounds.height);
+      element.yogaNode.setWidth(element.width);
+      element.yogaNode.setHeight(element.height);
     }
     if (key === "fill" && value !== undefined) {
       t.isString(value, `Text ${key}=${value} is not a string.`);
