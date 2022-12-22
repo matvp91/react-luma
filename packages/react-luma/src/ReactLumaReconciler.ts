@@ -8,6 +8,7 @@ import {
   removeChild,
   ReactLumaElement,
   ReactLumaElementType,
+  getElement,
 } from "./ReactLumaElement";
 import {
   setElementAttribute,
@@ -33,25 +34,11 @@ const STYLE = "style";
 const CHILDREN = "children";
 const TRANSFORM = "transform";
 
-// TODO: Do not scope this globally, we'll run into trouble when
-// we run multiple instances on the same page (eg: on docs).
-let requiresRecalculateLayout = true;
-
-function getRootElement(element: ReactLumaElement) {
-  let displayObject = element.displayObject;
-  while (displayObject.parent) {
-    displayObject = displayObject.parent;
-    console.log(displayObject);
-  }
-}
-
 function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
   for (const [key, value] of Object.entries(props)) {
     if (key === "children") {
       continue;
     } else if (key === "style") {
-      requiresRecalculateLayout = true;
-
       setElementStyle(element, value as ReactLumaElementStyle);
     } else if (key === "transform") {
       setElementTransform(element, value as ReactLumaElementTransform);
@@ -80,7 +67,11 @@ export const ReactLumaReconciler = createReconciler<
   supportsMutation: true,
   supportsPersistence: false,
 
-  createInstance(type, props) {
+  createInstance(type, props, rootContainer) {
+    if (props.hasOwnProperty(STYLE)) {
+      rootContainer.rootRecalcLayout = true;
+    }
+
     const element = createElement(type);
     setProps(element, props);
     return element;
@@ -91,7 +82,6 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   appendInitialChild(parentInstance, child) {
-    requiresRecalculateLayout = true;
     appendChild(parentInstance, child);
   },
 
@@ -123,8 +113,14 @@ export const ReactLumaReconciler = createReconciler<
     return false;
   },
 
-  prepareUpdate(instance, type, oldProps, newProps) {
-    return diffProperties(oldProps, newProps);
+  prepareUpdate(instance, type, oldProps, newProps, rootContainer) {
+    const updatePayload = diffProperties(oldProps, newProps);
+
+    if (updatePayload && updatePayload.hasOwnProperty(STYLE)) {
+      rootContainer.rootRecalcLayout = true;
+    }
+
+    return updatePayload;
   },
 
   commitUpdate(instance, updatePayload) {
@@ -152,9 +148,9 @@ export const ReactLumaReconciler = createReconciler<
   },
 
   resetAfterCommit(containerInfo) {
-    if (requiresRecalculateLayout) {
-      requiresRecalculateLayout = false;
-      calculateLayout(containerInfo, requiresRecalculateLayout);
+    if (containerInfo.rootRecalcLayout) {
+      containerInfo.rootRecalcLayout = false;
+      calculateLayout(containerInfo);
     }
   },
 

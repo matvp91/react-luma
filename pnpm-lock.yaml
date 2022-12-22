@@ -28,7 +28,7 @@ importers:
       clsx: ^1.2.1
       prettier: ^2.8.1
       prism-react-renderer: ^1.3.5
-      prism-themes: ^1.9.0
+      raw-loader: ^4.0.2
       react: ^17.0.2
       react-dom: ^17.0.2
       react-luma: workspace:*
@@ -45,7 +45,7 @@ importers:
       clsx: 1.2.1
       prettier: 2.8.1
       prism-react-renderer: 1.3.5_react@17.0.2
-      prism-themes: 1.9.0
+      raw-loader: 4.0.2_webpack@5.75.0
       react: 17.0.2
       react-dom: 17.0.2_react@17.0.2
       react-luma: link:../packages/react-luma
@@ -7627,10 +7627,6 @@ packages:
       react: 17.0.2
     dev: false
 
-  /prism-themes/1.9.0:
-    resolution: {integrity: sha512-tX2AYsehKDw1EORwBps+WhBFKc2kxfoFpQAjxBndbZKr4fRmMkv47XN0BghC/K1qwodB1otbe4oF23vUTFDokw==}
-    dev: false
-
   /prismjs/1.29.0:
     resolution: {integrity: sha512-Kx/1w86q/epKcmte75LNrEoT+lX8pBpavuAbvJWRXar7Hz8jrtF+e3vY751p0R8H9HdArwaCTNDDzHg/ScJK1Q==}
     engines: {node: '>=6'}
@@ -7754,6 +7750,17 @@ packages:
       http-errors: 2.0.0
       iconv-lite: 0.4.24
       unpipe: 1.0.0
+    dev: false
+
+  /raw-loader/4.0.2_webpack@5.75.0:
+    resolution: {integrity: sha512-ZnScIV3ag9A4wPX/ZayxL/jZH+euYb6FcUinPcgiQW0+UBtEv0O6Q3lGd3cqJ+GHH+rksEv3Pj99oxJ3u3VIKA==}
+    engines: {node: '>= 10.13.0'}
+    peerDependencies:
+      webpack: ^4.0.0 || ^5.0.0
+    dependencies:
+      loader-utils: 2.0.4
+      schema-utils: 3.1.1
+      webpack: 5.75.0
     dev: false
 
   /rc/1.2.8:

@@ -1,0 +1,47 @@
+.colPreview {
+  max-width: 420px;
+}
+
+.containerEditor {
+  background-color: #282d34;
+  height: 100%;
+}
+
+.containerPreview {
+  position: relative;
+  height: 100%;
+}
+
+.containerPreview canvas {
+  width: 100%;
+}
+
+.titleEditor,
+.titlePreview {
+  text-transform: uppercase;
+  padding: 0.5rem 1rem;
+  font-weight: bold;
+  font-size: 0.75rem;
+}
+
+.titleEditor {
+  background-color: #20232a;
+  color: #ffffff;
+}
+
+.titlePreview {
+  background-color: #ececec;
+}
+
+.titlePreview.error {
+  background-color: #ff6464;
+  color: #ffffff;
+}
+
+.previewError {
+  color: #ff6464;
+  position: absolute;
+  inset: 0;
+  padding: 1rem;
+  background-color: #f1f1f1;
+}

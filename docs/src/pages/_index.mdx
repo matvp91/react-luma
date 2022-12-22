@@ -1,0 +1,23 @@
+import Playground from "@site/src/components/Playground";
+import basicCode from "!!raw-loader!@site/src/code/basic.tsx";
+
+Build your scene declaratively with re-usable, self-contained components and render
+them in a WebGL canvas. React Luma started out as an optimized renderer for TV's, set-top boxes and other low memory devices.
+
+# Installation
+
+```js
+npm install react-luma
+```
+
+React Luma's API is very familiar to anyone who has worked with
+React DOM. The main difference is that you can no longer rely on DOM
+elements such as a div or span, but you'd be building your UI
+composition with the built-in base components.
+
+# Playground
+
+Feel free to make changes to the code below and the compiler will
+render an immediate result.
+
+<Playground code={basicCode} />

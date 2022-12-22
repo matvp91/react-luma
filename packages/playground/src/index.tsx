@@ -206,9 +206,11 @@ function App() {
 }
 
 function TestApp() {
+  const [width, setWidth] = useState("100%");
+  window.setWidth = setWidth;
   return (
     <Sprite
-      style={{ width: "100%", height: "100%" }}
+      style={{ width, height: "100%" }}
       texture={TEXTURE_WHITE}
       tint="#ff00ff"
     />

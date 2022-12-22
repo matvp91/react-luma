@@ -4,7 +4,7 @@ const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: "React Luma",
-  tagline: "React Luma is a custom React renderer to build WebGL apps.",
+  tagline: "React Luma is a custom React renderer to build WebGL apps",
   onBrokenLinks: "throw",
   onBrokenMarkdownLinks: "warn",
 
@@ -44,7 +44,7 @@ const config = {
         items: [
           {
             type: "doc",
-            docId: "intro",
+            docId: "index",
             position: "left",
             label: "Documentation",
           },
@@ -59,11 +59,11 @@ const config = {
         style: "light",
         links: [
           {
-            title: "Docs",
+            title: "Documentation",
             items: [
               {
-                label: "Tutorial",
-                to: "/docs/intro",
+                label: "Getting Started",
+                to: "/docs/getting-started",
               },
             ],
           },
@@ -72,7 +72,7 @@ const config = {
             items: [
               {
                 label: "Stack Overflow",
-                href: "https://stackoverflow.com/questions/tagged/docusaurus",
+                href: "https://stackoverflow.com/questions/tagged/react-luma",
               },
               {
                 label: "Support",
@@ -81,7 +81,7 @@ const config = {
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} React Luma`,
+        copyright: `Copyright © ${new Date().getFullYear()} Matthias Van Parijs`,
       },
       prism: {
         theme: lightCodeTheme,

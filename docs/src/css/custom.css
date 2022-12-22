@@ -1,22 +1,25 @@
+@import url("https://fonts.googleapis.com/css2?family=Fredoka+One&family=Roboto:wght@400;700&display=swap");
+
 :root {
-  --ifm-color-primary: #ef476f;
-  --ifm-color-primary-dark: #ed2a59;
-  --ifm-color-primary-darker: #eb1c4e;
-  --ifm-color-primary-darkest: #c8113d;
-  --ifm-color-primary-light: #f16485;
-  --ifm-color-primary-lighter: #f37290;
-  --ifm-color-primary-lightest: #f697ad;
+  --ifm-font-family-base: "Roboto", sans-serif;
+  --ifm-color-primary: #c9184a;
+  --ifm-color-primary-dark: #b51643;
+  --ifm-color-primary-darker: #ab143f;
+  --ifm-color-primary-darkest: #8d1134;
+  --ifm-color-primary-light: #dd1a51;
+  --ifm-color-primary-lighter: #e41f56;
+  --ifm-color-primary-lightest: #e83d6d;
   --ifm-code-font-size: 95%;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.1);
 }
 
 [data-theme="dark"] {
-  --ifm-color-primary: #25c2a0;
-  --ifm-color-primary-dark: #21af90;
-  --ifm-color-primary-darker: #1fa588;
-  --ifm-color-primary-darkest: #1a8870;
-  --ifm-color-primary-light: #29d5b0;
-  --ifm-color-primary-lighter: #32d8b4;
-  --ifm-color-primary-lightest: #4fddbf;
+  --ifm-color-primary: #c9184a;
+  --ifm-color-primary-dark: #b51643;
+  --ifm-color-primary-darker: #ab143f;
+  --ifm-color-primary-darkest: #8d1134;
+  --ifm-color-primary-light: #dd1a51;
+  --ifm-color-primary-lighter: #e41f56;
+  --ifm-color-primary-lightest: #e83d6d;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }

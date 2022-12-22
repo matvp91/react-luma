@@ -12,7 +12,10 @@ const LumaElementInternalKey = "__lumaElement";
 
 export type ReactLumaElement = {
   yogaNode: yoga.YogaNode;
-  calculateLayout: boolean;
+  // Only applicable if the element is the rootElement in
+  // the tree. The reconciler will set this flag if a recalculation
+  // of the layout is necessairy.
+  rootRecalcLayout: boolean;
 } & (
   | {
       type: "View";
@@ -53,7 +56,7 @@ export function createElement(type: ReactLumaElementType): ReactLumaElement {
     type,
     displayObject,
     yogaNode: yoga.Node.create(),
-    calculateLayout: false,
+    rootRecalcLayout: false,
   };
 
   displayObject[LumaElementInternalKey] = lumaElement;

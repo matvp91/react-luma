@@ -1,0 +1,42 @@
+.root {
+  font-family: "Fredoka One", cursive;
+  text-align: center;
+  font-size: 9rem;
+  position: relative;
+  font-weight: 900;
+  text-transform: uppercase;
+  line-height: 1;
+  color: transparent;
+}
+
+.root:focus {
+  outline: none;
+}
+
+.root::before,
+.root::after {
+  content: attr(data-heading);
+  position: absolute;
+  top: 0;
+  left: 0;
+}
+
+.root::before {
+  color: var(--ifm-color-primary-darker);
+  clip-path: polygon(0% 100%, 100% 100%, 100% 40%, 0 60%);
+}
+
+.root::after {
+  color: var(--ifm-color-primary-lighter);
+  clip-path: polygon(0 0, 100% 0%, 100% 36%, 0 56%);
+  animation: slide 5s infinite;
+}
+
+@keyframes slide {
+  0% {
+    transform: translateX(0);
+  }
+  50% {
+    transform: translate(-20px, 2%);
+  }
+}
