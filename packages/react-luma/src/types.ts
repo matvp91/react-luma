@@ -1,17 +1,17 @@
 import * as PIXI from "pixi.js";
 import type { ReactNode, MutableRefObject, ForwardedRef } from "react";
 import type { ReactLumaElement } from "./ReactLumaElement";
+import type { PickCommon } from "./typed-utils";
 
-type PickCommon<A, B> = Pick<
-  A,
-  {
-    [K in keyof A & keyof B]: A[K] extends B[K]
-      ? B[K] extends A[K]
-        ? K
-        : never
-      : never;
-  }[keyof A & keyof B]
->;
+declare global {
+  namespace JSX {
+    interface IntrinsicElements {
+      View: ReactLumaElementViewProps;
+      Sprite: ReactLumaElementSpriteProps;
+      Text: ReactLumaElementTextProps;
+    }
+  }
+}
 
 export type ReactLumaElementCommonProps = PickCommon<
   PickCommon<ReactLumaElementViewProps, ReactLumaElementSpriteProps>,
@@ -41,7 +41,7 @@ export type ReactLumaElementTransform = {
   y?: number;
 };
 
-type ReactLumaElementRef =
+export type ReactLumaElementRef =
   | MutableRefObject<ReactLumaElement | undefined>
   | ForwardedRef<ReactLumaElement>;
 
@@ -70,13 +70,3 @@ export type ReactLumaElementTextProps = {
 };
 
 export type ReactLumaOpaqueValue = any;
-
-declare global {
-  namespace JSX {
-    interface IntrinsicElements {
-      View: ReactLumaElementViewProps;
-      Sprite: ReactLumaElementSpriteProps;
-      Text: ReactLumaElementTextProps;
-    }
-  }
-}

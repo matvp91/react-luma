@@ -35,9 +35,13 @@ function setProps(element: ReactLumaElement, props: ReactLumaGenericProps) {
     if (key === "children") {
       continue;
     } else if (key === "style") {
-      setElementStyle(element, value as ReactLumaElementStyle);
+      if (value) {
+        setElementStyle(element, value as ReactLumaElementStyle);
+      }
     } else if (key === "transform") {
-      setElementTransform(element, value as ReactLumaElementTransform);
+      if (value) {
+        setElementTransform(element, value as ReactLumaElementTransform);
+      }
     } else {
       setElementAttribute(element, key, value);
     }

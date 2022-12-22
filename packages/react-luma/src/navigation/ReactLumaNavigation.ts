@@ -531,3 +531,5 @@ export function createManager() {
     getSectionId,
   };
 }
+
+export type Manager = ReturnType<typeof createManager>;
