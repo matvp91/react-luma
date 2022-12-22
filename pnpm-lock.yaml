@@ -82,6 +82,7 @@ importers:
 
   packages/react-luma:
     specifiers:
+      '@pixi/canvas-renderer': ^7.0.5
       '@react-luma/tsconfig': workspace:*
       '@react-pdf/yoga': ^3.0.0
       '@tweenjs/tween.js': ^18.6.4
@@ -92,6 +93,7 @@ importers:
       '@types/yoga-layout': ^1.9.4
       esbuild: ^0.16.7
       pixi.js: ^7.0.5
+      pixi.js-legacy: ^7.0.5
       react: ^18.2.0
       react-reconciler: 0.29.0
       stats.js: ^0.17.0
@@ -100,9 +102,11 @@ importers:
       typed-assert: ^1.0.9
       typescript: ^4.9.4
     dependencies:
+      '@pixi/canvas-renderer': 7.0.5
       '@react-pdf/yoga': 3.0.0
       '@tweenjs/tween.js': 18.6.4
       pixi.js: 7.0.5
+      pixi.js-legacy: 7.0.5
       react: 18.2.0
       react-reconciler: 0.29.0_react@18.2.0
       stats.js: 0.17.0
@@ -2929,6 +2933,46 @@ packages:
     resolution: {integrity: sha512-GGFrFIAQRzSmmC9ZALSIwaGZNi10Rt0MbuedK+oGPKtSuvQJ37bNGL4sU7PXsTulBdBMUQgbIzmq6FBPnpV9kA==}
     dependencies:
       '@types/css-font-loading-module': 0.0.7
+    dev: false
+
+  /@pixi/canvas-display/7.0.5:
+    resolution: {integrity: sha512-e1wba6kPcNJoTcTcuDdOkdpxvY5M3cPz3FvDwYLgycbFqwcF9aAgkdyXcawZ2HyMKtPEfA1HQCLWxRfKHhDheA==}
+    dev: false
+
+  /@pixi/canvas-extract/7.0.5:
+    resolution: {integrity: sha512-Dyjvmy6ZrsADfDjG5xdAXpI3RVj/e+nE3NPgrpyzl3iGGffF5mkWKwK2AmyJF1RjmIY5zcrsEeJdt5hr0USUAQ==}
+    dev: false
+
+  /@pixi/canvas-graphics/7.0.5:
+    resolution: {integrity: sha512-VYQtyFB6KvavLZMY/t2X5mpArxKMhf/ue0HLnq/738kwZkFoVuIf5pIduKZXeqEqAOg1sO3emBrfCsmIWtKXHA==}
+    dev: false
+
+  /@pixi/canvas-mesh/7.0.5:
+    resolution: {integrity: sha512-GZ+AsJyFHDLn4c/P57vx0JGGpgjSHxmKQKBXsII/jI5mEitFvRn+dHhe9WApvlG/LG4I3JpdIH7wKcJT2daDsA==}
+    dev: false
+
+  /@pixi/canvas-particle-container/7.0.5:
+    resolution: {integrity: sha512-HOohts6NvyDRhWzgV+uEEoN5shIZQ7bMhIM3KWdczut7OsWWiMb3dQvascAc0tlO8bO/HK0C0OsS5+waJfSfgA==}
+    dev: false
+
+  /@pixi/canvas-prepare/7.0.5:
+    resolution: {integrity: sha512-+AEiwq5D6UTB3hkGEwFWGh0aJ4I1uMfIFDLW28PMY9E6TZBVCd0aYiVAGjqXw9b2Zx6W/MIQVTKicQRr624XMQ==}
+    dev: false
+
+  /@pixi/canvas-renderer/7.0.5:
+    resolution: {integrity: sha512-0NYFCKV8Qhp0w0LRiXwd6bF3ykK2YX+LcDimToC/vX3Drmqn7/qcg8GiAT8WYb7lifJm77vDOVCPIqjKTt+Alg==}
+    dev: false
+
+  /@pixi/canvas-sprite-tiling/7.0.5:
+    resolution: {integrity: sha512-qPXj+EwLydD/vEzoJjNI60WsjMWOObisjvDiHCIa+mY90vJYsITPBXQ4zyZH4EVL+Hrzvwmu5aAdmUr+CZdf0A==}
+    dev: false
+
+  /@pixi/canvas-sprite/7.0.5:
+    resolution: {integrity: sha512-R/xQjanc+1T92wr/wxpFbPPqR1gzpplShEikz/GWtmTpiI/NaNOkQvhm3I9ggjy22vWZQvhCEzyBikOelFdF/A==}
+    dev: false
+
+  /@pixi/canvas-text/7.0.5:
+    resolution: {integrity: sha512-E1Pv5rNq/eqpGZZnRaa75KJLAVG6naEaL9c3/23EyehRfcSpAy/Q5E0uxM7rb6nOFfmn+sCvvvEq8aeD+GdPFQ==}
     dev: false
 
   /@pixi/compressed-textures/7.0.5:
@@ -7130,6 +7174,22 @@ packages:
   /pirates/4.0.5:
     resolution: {integrity: sha512-8V9+HQPupnaXMA23c5hvl69zXvTwTzyAYasnkb0Tts4XvO4CliqONMOnvlq26rkhLC3nWDFBJf73LU1e1VZLaQ==}
     engines: {node: '>= 6'}
+
+  /pixi.js-legacy/7.0.5:
+    resolution: {integrity: sha512-ax7DF5omkn5DKjl+Ml/7kpcySsfGpp5Hc02RsOTcdjAkIee5CSoEL9onEO0SePdTXeotIw7YMR+PvIeOaPsm2w==}
+    dependencies:
+      '@pixi/canvas-display': 7.0.5
+      '@pixi/canvas-extract': 7.0.5
+      '@pixi/canvas-graphics': 7.0.5
+      '@pixi/canvas-mesh': 7.0.5
+      '@pixi/canvas-particle-container': 7.0.5
+      '@pixi/canvas-prepare': 7.0.5
+      '@pixi/canvas-renderer': 7.0.5
+      '@pixi/canvas-sprite': 7.0.5
+      '@pixi/canvas-sprite-tiling': 7.0.5
+      '@pixi/canvas-text': 7.0.5
+      pixi.js: 7.0.5
+    dev: false
 
   /pixi.js/7.0.5:
     resolution: {integrity: sha512-XCFSUojaIdDz745bvQDmyEsJ6A3eh7mCeGW+esukzLQFPnDP/NvPsJszJKhyRuoktyzJb5xsuV08Eh3Y7+VC3w==}

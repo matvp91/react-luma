@@ -14,7 +14,7 @@ export default function useAnimation(x: number, change: any) {
   useEffect(() => {
     const coords = { x: ref.current };
     const tween = new TWEEN.Tween(coords)
-      .to({ x }, 250)
+      .to({ x }, 100)
       .onUpdate(() => {
         change(coords.x);
       })

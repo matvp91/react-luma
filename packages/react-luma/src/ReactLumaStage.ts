@@ -33,12 +33,14 @@ export function createContainer(
   const app = new PIXI.Application({
     width: options.width,
     height,
-    resolution: window.devicePixelRatio,
+    //resolution: window.devicePixelRatio,
     view: canvasElement,
     // The canvas always has a transparent background, we can then
     // rely on DOM elements such as video, to render underneath and have
     // player controls built by Luma.
     backgroundAlpha: 0,
+    hello: true,
+    //forceCanvas: true,
   });
   ReactLumaCurrentApp.current = app;
 

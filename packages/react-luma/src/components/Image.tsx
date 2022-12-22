@@ -11,9 +11,12 @@ type ImageProps = ReactLumaElementSpriteProps & {
 export default forwardRef<ReactLumaElement, ImageProps>((props, ref) => {
   const [texture, setTexture] = useState<PIXI.Texture | undefined>();
 
-  useEffect(() => {
-    PIXI.Texture.fromURL(props.src).then(setTexture);
-  }, [props.src]);
-
-  return <Sprite {...props} texture={texture} ref={ref} />;
+  return (
+    <Sprite
+      {...props}
+      texture={PIXI.Texture.from(props.src)}
+      tint="#fff000"
+      ref={ref}
+    />
+  );
 });
